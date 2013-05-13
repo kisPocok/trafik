@@ -5,16 +5,143 @@
   <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
   <title>Traffik</title>
   <style type="text/css">
-    html { height: 100% }
-    body { height: 100%; margin: 0; padding: 0 }
-    #map-canvas { height: 100% }
+	@font-face {
+	  font-family: "Flat-UI-Icons-16";
+	  src: url("fonts/Flat-UI-Icons-16.eot");
+	  src: url("fonts/Flat-UI-Icons-16.eot?#iefix") format("embedded-opentype"), url("fonts/Flat-UI-Icons-16.woff") format("woff"), url("fonts/Flat-UI-Icons-16.ttf") format("truetype"), url("fonts/Flat-UI-Icons-16.svg#Flat-UI-Icons-16") format("svg");
+	  font-weight: normal;
+	  font-style: normal; }
+
+	  /* Use the following CSS code if you want to use data attributes for inserting your icons */
+	[data-icon]:before {
+	  font-family: "Flat-UI-Icons-16";
+	  content: attr(data-icon);
+	  speak: none;
+	  font-weight: normal;
+	  line-height: 1;
+	  -webkit-font-smoothing: antialiased; }
+
+	  /* Use the following CSS code if you want to have a class per icon */
+	  /*Instead of a list of all class selectors,
+	 *you can use the generic selector below, but it's slower:
+	 *[class*="fui-"]:before { */
+	.fui-volume-16:before, .fui-video-16:before, .fui-time-16:before, .fui-settings-16:before, .fui-plus-16:before, .fui-new-16:before, .fui-menu-16:before, .fui-man-16:before, .fui-mail-16:before, .fui-lock-16:before, .fui-location-16:before, .fui-heart-16:before, .fui-eye-16:before, .fui-cross-16:before, .fui-cmd-16:before, .fui-checkround-16:before, .fui-checkmark-16:before, .fui-camera-16:before, .fui-calendar-16:before, .fui-bubble-16:before {
+	  font-family: "Flat-UI-Icons-16";
+	  speak: none;
+	  font-style: normal;
+	  font-weight: normal;
+	  line-height: 1;
+	  -webkit-font-smoothing: antialiased; }
+
+	.fui-time-16:before {
+		content: "\e002";
+		display: block;
+		font-size: 16px;
+	}
+
+	.fui-location-16:before {
+		content: "\e00a";
+		display: block;
+		font-size: 16px;
+	}
+
+	.fui-cross-16:before {
+		content: "\e00d";
+		display: block;
+		font-size: 16px;
+	}
+
+	html { height: 100% }
+	body {
+		height: 100%;
+		margin: 0;
+		padding: 0;
+		font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+		font-size: 1em;
+	}
+	#map-canvas {
+		height: 100%;
+		z-index: 9;
+	}
+	#destination {
+		z-index: 10;
+		background-color: #fff;
+		margin: -168px auto 0 auto;
+		height: 168px;
+		width: 100%;
+		max-width: 420px;
+		position: relative;
+
+		border-radius: 3px 3px 0 0;
+		border: 1px solid #fff;
+	}
+	#destination h1 {
+		color: #2C3E50;
+		margin: 0;
+		font-size: 160%;
+		float: left;
+	}
+	#destination h2 {
+		color: #BDC3C7;
+		margin: 0;
+		font-size: 90%;
+		float: left;
+	}
+	#destination > div:first-child {
+		padding: 20px;
+	}
+	#destination .top-line {
+		min-height: 49px;
+	}
+	#destination .top-line > div {
+		float: left;
+		padding-right: 10px;
+	}
+	#destination .top-line img {
+		display: inline-block;
+		border-radius: 100px;
+		width: 54px;
+	}
+	#destination .bottom-line > div {
+		color: #fff;
+		font-size: 80%;
+		background-color: #E74C3C;
+		float: left;
+		width: 120px;
+		height: 40px;
+		padding: 20px 10px;
+		text-align: center;
+		line-height: 2em;
+	}
+	#destination .bottom-line > div:first-child {
+		background-color: #F1C40F;
+		border-left: 1px solid #F1C40F;
+		margin-left: -1px;
+	}
+	#destination .bottom-line > div:last-child {
+		background-color: #2ECC71;
+		border-right: 1px solid #2ECC71;
+		margin-right: -1px;
+	}
   </style>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBTYqceLuszLWf1_yF9CExEitMtvkZQIzE&sensor=true"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBTYqceLuszLWf1_yF9CExEitMtvkZQIzE&sensor=true&language=hu"></script>
   <script src="js/q.min.js"></script>
   <script src="js/map.js"></script>
 </head>
 <body>
-  <div id="map-canvas"/>
+  <div id="map-canvas"></div>
+  <div id="destination">
+	  <div class="top-line">
+		  <div></div>
+		  <h1>Közeli traffik keresése</h1>
+		  <h2></h2>
+	  </div>
+	  <div class="bottom-line">
+		  <div class="fui-time-16"></div>
+		  <div class="fui-location-16"></div>
+		  <div class="fui-cross-16">Másikat</div>
+	  </div>
+  </div>
 </body>
 </html>
