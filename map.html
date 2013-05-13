@@ -131,6 +131,27 @@
 			width: 33%;
 		}
 	}
+	@media (min-width: 1024px) {
+		#destination {
+			max-width: 840px;
+			width: 840px !important;
+			height: 97px;
+			margin-top: -97px;
+		}
+		#destination .top-line {
+			float: left;
+		}
+		#destination .bottom-line {
+		    float: right;
+	    }
+		#destination .bottom-line > div {
+		    height: 57px;
+			padding: 35px 10px 5px;
+	    }
+		#destination .bottom-line > div:last-child {
+			border-radius: 0 3px 0 0;
+	    }
+	}
   </style>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBTYqceLuszLWf1_yF9CExEitMtvkZQIzE&sensor=true&language=hu"></script>
