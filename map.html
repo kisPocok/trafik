@@ -73,19 +73,18 @@
 		position: relative;
 
 		border-radius: 3px 3px 0 0;
-		border: 1px solid #fff;
 	}
 	#destination h1 {
 		color: #2C3E50;
 		margin: 0;
 		font-size: 160%;
-		float: left;
+		display: inline-block;
 	}
 	#destination h2 {
 		color: #BDC3C7;
 		margin: 0;
 		font-size: 90%;
-		float: left;
+		display: block;
 	}
 	#destination > div:first-child {
 		padding: 20px;
@@ -109,19 +108,15 @@
 		float: left;
 		width: 120px;
 		height: 40px;
-		padding: 20px 10px;
+		padding: 24px 10px 16px;
 		text-align: center;
 		line-height: 2em;
 	}
 	#destination .bottom-line > div:first-child {
 		background-color: #F1C40F;
-		border-left: 1px solid #F1C40F;
-		margin-left: -1px;
 	}
 	#destination .bottom-line > div:last-child {
 		background-color: #2ECC71;
-		border-right: 1px solid #2ECC71;
-		margin-right: -1px;
 	}
   </style>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
@@ -138,8 +133,8 @@
 		  <h2></h2>
 	  </div>
 	  <div class="bottom-line">
-		  <div class="fui-time-16"></div>
 		  <div class="fui-location-16"></div>
+		  <div class="fui-time-16"></div>
 		  <div class="fui-cross-16">Másikat</div>
 	  </div>
   </div>

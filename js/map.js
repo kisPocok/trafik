@@ -172,10 +172,11 @@ var trfk = (function(window, $)
 			}
 
 			return {
-				address:  title,
-				address2: subtitle,
-				duration: d.duration.text,
-				distance: d.distance.text
+				address:     title,
+				address2:    subtitle,
+				distance:    getDistanceText(d.distance.value, d.distance.text),
+				duration:    getDateText(d.duration.value, d.duration.text),
+				destination: navigationResponse.Nb.destination
 			};
 		};
 
@@ -186,14 +187,60 @@ var trfk = (function(window, $)
 		{
 			var des  = $('#destination');
 			var divs = des.find('.bottom-line > div');
-			var src  = 'http://maps.googleapis.com/maps/api/streetview?size=100x100&location=47.514476,19.057074&heading=08&pitch=0&sensor=false&key=AIzaSyBTYqceLuszLWf1_yF9CExEitMtvkZQIzE'
+			var src  = getStreetViewImage(data.destination, 100, 100);
 
 			des.find('.top-line > div').html('<img src="' + src + '" />')
 			des.find('h1').text(data.address);
 			des.find('h2').text(data.address2);
 			$(divs.get(0)).text(data.distance);
 			$(divs.get(1)).text(data.duration);
-		}
+		};
+
+		/**
+		 * @param meter {number}
+		 * @param text {string}
+		 * @returns {string}
+		 */
+		var getDistanceText = function(meter, text)
+		{
+			if (meter < 100) {
+				return 'Pár lépésre';
+			} else if (meter > 950) {
+				return text;
+			}
+			return meter + ' méter';
+		};
+
+		/**
+		 * @param seconds {number}
+		 * @param text {string}
+		 * @returns {string}
+		 */
+		var getDateText = function(seconds, text)
+		{
+			if (seconds < 60) {
+				return 'Szempillantás';
+			}
+			return text;
+		};
+
+		/**
+		 * @param pos {google.maps.LatLng}
+		 * @param sizeX {number}
+		 * @param sizeY {number}
+		 * @returns {string}
+		 */
+		var getStreetViewImage = function(pos, sizeX, sizeY)
+		{
+			return [
+				'http://maps.googleapis.com/maps/api/streetview?size=',
+				sizeX, 'x', sizeY,
+				'&location=', pos.kb, ',', pos.lb,
+				'&heading=08',
+				'&pitch=0',
+				'&sensor=false'
+			].join('');
+		};
 
 		/**
 		 * @returns {google.maps.LatLng}
@@ -208,6 +255,9 @@ var trfk = (function(window, $)
 		 */
 		var getDefaultLocation = function()
 		{
+			//return new google.maps.LatLng(47.4843954, 19.0688688); // next 2 me
+			//return new google.maps.LatLng(47.482476499999995, 19.068560399999987); // 200m
+			return new google.maps.LatLng(47.480176499999995, 19.068360399999987);
 			return new google.maps.LatLng(47.514476, 19.057074);
 		};
 
