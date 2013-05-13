@@ -90,7 +90,7 @@
 		padding: 20px;
 	}
 	#destination .top-line {
-		min-height: 49px;
+		min-height: 53px;
 	}
 	#destination .top-line > div {
 		float: left;
@@ -108,7 +108,7 @@
 		float: left;
 		width: 120px;
 		height: 40px;
-		padding: 24px 10px 16px;
+		padding: 23px 10px 17px;
 		text-align: center;
 		line-height: 2em;
 	}
@@ -117,6 +117,19 @@
 	}
 	#destination .bottom-line > div:last-child {
 		background-color: #2ECC71;
+	}
+	@media (max-width: 480px) {
+		#destination .bottom-line > div {
+			width: 34%;
+			padding-left: 0;
+			padding-right: 0;
+		}
+		#destination .bottom-line > div:first-child {
+			width: 33%;
+		}
+		#destination .bottom-line > div:last-child {
+			width: 33%;
+		}
 	}
   </style>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
