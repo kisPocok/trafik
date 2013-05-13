@@ -255,10 +255,14 @@ var trfk = (function(window, $)
 		 */
 		var getDefaultLocation = function()
 		{
-			//return new google.maps.LatLng(47.4843954, 19.0688688); // next 2 me
-			//return new google.maps.LatLng(47.482476499999995, 19.068560399999987); // 200m
-			return new google.maps.LatLng(47.480176499999995, 19.068360399999987);
-			return new google.maps.LatLng(47.514476, 19.057074);
+			var traffikList = [
+				new google.maps.LatLng(47.4843954, 19.0688688),
+				new google.maps.LatLng(47.482476499999995, 19.068560399999987),
+				new google.maps.LatLng(47.480176499999995, 19.068360399999987),
+				new google.maps.LatLng(47.514476, 19.057074)
+			];
+			var random = Math.floor(Math.random()*traffikList.length);
+			return traffikList[random];
 		};
 
 		/**
