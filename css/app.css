@@ -21,9 +21,19 @@ a, a:hover {
 h1, h2, h3 {
 	line-height: normal;
 }
+
+/*
+--------------------------------------
+Google maps
+--------------------------------------
+*/
 #map-canvas {
 	height: 100%;
 	z-index: 9;
+}
+#map-canvas img {
+	max-width: none;
+	vertical-align: baseline;
 }
 
 /*
@@ -148,7 +158,7 @@ Settings widget
 	display: none;
 }
 #settings-layout h2 {
-	margin-bottom: 10px;
+	margin: 0 0 10px 0;
 }
 #settings-layout a {
 	margin-top: 162px;
