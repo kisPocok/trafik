@@ -150,10 +150,12 @@ var trfk = (function(window, $)
 			directionsService.route(request, function(response, status) {
 				if (status == google.maps.DirectionsStatus.OK) {
 					directionsDisplay.setDirections(response);
+					/*
 					// the sollution: http://stackoverflow.com/questions/4813728/change-individual-markers-in-google-maps-directions-api-v3
 					var leg = response.routes[ 0 ].legs[ 0 ];
 					makeMarker(leg.start_location, icons.start, "Kezdőpont");
 					makeMarker(leg.end_location, icons.end, 'Dohánybolt');
+					*/
 					def.resolve(response);
 				} else {
 					def.reject(new Error('Hiba történt az útvonal tervezése közben!'));
@@ -162,9 +164,15 @@ var trfk = (function(window, $)
 			return def.promise;
 		};
 
-		var makeMarker = function(position, icon, title) {
-			new google.maps.Marker({
-				position: position,
+		/**
+		 * @param pos {google.maps.LatLng}
+		 * @param icon {object}
+		 * @param title {string}
+		 * @returns {google.maps.Marker}
+		 *
+		var makeMarker = function(pos, icon, title) {
+			return new google.maps.Marker({
+				position: pos,
 				map:      map,
 				icon:     icon,
 				title:    title
@@ -320,6 +328,7 @@ var trfk = (function(window, $)
 						$('#destination, #settings-layout').toggleClass('hidden');
 					} else if (element.is('input')) {
 						setTransportMode(element.attr('value'));
+						navigateUserToNearestTraffic();
 					}
 				})
 				.find('[value="' + getTransportMode() + '"]')
@@ -403,9 +412,10 @@ var trfk = (function(window, $)
 		 * INIT CODE
 		 */
 		var map, transportMode;
-		var directionsDisplay = new google.maps.DirectionsRenderer({suppressMarkers: true});
+		var directionsDisplay = new google.maps.DirectionsRenderer(/*{suppressMarkers: true}*/);
 		var directionsService = new google.maps.DirectionsService();
 		var geocoder          = new google.maps.Geocoder();
+		/*
 		var icons = {
 			start: new google.maps.MarkerImage(
 				// URL
@@ -428,10 +438,14 @@ var trfk = (function(window, $)
 				new google.maps.Point(16, 37)
 			)
 		};
+		*/
 
-		Q.fcall(function() {
+		Q.fcall(function()
+			{
 				map = initializeMap()
 				activateUI()
+				// disable scrolling
+				$(document).bind('touchmove', false);
 			})
 			.then(showLocation)
 			.then(navigateUserToNearestTraffic)

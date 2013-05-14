@@ -163,7 +163,7 @@ Settings widget
 	margin: 0 0 10px 0;
 }
 #settings-layout a {
-	margin-top: 162px;
+	margin-top: 100px;
 }
 
 /*
@@ -209,5 +209,8 @@ For BIG desktop
 	}
 	#destination .bottom-line > *:last-child {
 		border-radius: 0 3px 0 0;
+	}
+	#settings-layout a {
+		margin-top: 162px;
 	}
 }
