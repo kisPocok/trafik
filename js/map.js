@@ -144,7 +144,7 @@ var trfk = (function(window, $)
 			var request = {
 				origin:      userPos,
 				destination: destinationPos,
-				travelMode:  google.maps.TravelMode.WALKING
+				travelMode:  getTransportMode()
 			};
 			directionsDisplay.setMap(map);
 			directionsService.route(request, function(result, status) {
@@ -212,7 +212,7 @@ var trfk = (function(window, $)
 		var populateDestionationLayout = function(data)
 		{
 			var des  = $('#destination');
-			var divs = des.find('.bottom-line > div');
+			var divs = des.find('.bottom-line > *');
 			var src  = getStreetViewImage(data.destination, 100, 100);
 
 			des.find('.top-line > div').html('<img src="' + src + '" />')
@@ -291,6 +291,49 @@ var trfk = (function(window, $)
 			return traffikList[random];
 		};
 
+		var activateUI = function()
+		{
+			$('.settings').click(function(event) {
+				event.stopPropagation();
+				$('#destination, #settings-layout').toggleClass('hidden');
+				return false;
+			});
+
+			$('.radio')
+				.click(function(event) {
+					var element = $(event.target);
+					if (element.hasClass('radio')) {
+						$('#destination, #settings-layout').toggleClass('hidden');
+					} else if (element.is('input')) {
+						setTransportMode(element.attr('value'));
+					}
+				})
+				.find('[value="' + getTransportMode() + '"]')
+				.attr('checked', 'checked')
+				.parent()
+				.addClass('checked');
+		};
+
+		/**
+		 * @param mode {google.maps.TravelMode.*}
+		 */
+		var setTransportMode = function(mode)
+		{
+			window.localStorage.setItem('user-transport-mode', mode);
+			transportMode = mode;
+		}
+
+		/**
+		 * @returns {google.maps.TravelMode.*}
+		 */
+		var getTransportMode = function()
+		{
+			if (window.localStorage.hasOwnProperty('user-transport-mode')) {
+				return window.localStorage.getItem('user-transport-mode');
+			}
+			return google.maps.TravelMode.WALKING;
+		}
+
 		/**
 		 * @returns {google.maps.Map}
 		 */
@@ -345,13 +388,14 @@ var trfk = (function(window, $)
 		/**
 		 * INIT CODE
 		 */
-		var map;
+		var map, transportMode;
 		var directionsDisplay = new google.maps.DirectionsRenderer();
 		var directionsService = new google.maps.DirectionsService();
 		var geocoder          = new google.maps.Geocoder();
 
 		Q.fcall(function() {
 				map = initializeMap()
+				activateUI()
 			})
 			.then(showLocation)
 			.then(navigateUserToNearestTraffic)

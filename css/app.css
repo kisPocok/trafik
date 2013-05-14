@@ -1,0 +1,201 @@
+
+/*
+--------------------------------------
+Default tags
+--------------------------------------
+*/
+html {
+	height: 100%;
+}
+body {
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+	font-size: 1em;
+	overflow: hidden;
+}
+a, a:hover {
+	text-decoration: none;;
+}
+h1, h2, h3 {
+	line-height: normal;
+}
+#map-canvas {
+	height: 100%;
+	z-index: 9;
+}
+
+/*
+--------------------------------------
+Destination widget
+--------------------------------------
+*/
+#destination {
+	z-index: 10;
+	background-color: #fff;
+	margin: -168px auto 0 auto;
+	height: 168px;
+	width: 100%;
+	max-width: 420px;
+	position: relative;
+	border-radius: 3px 3px 0 0;
+
+	transition: all 0.5s;
+	-moz-transition: all 0.5s;
+	-webkit-transition: all 0.5s;
+	-o-transition: all 0.5s;
+}
+#destination.hidden {
+	margin-top: 0;
+}
+#destination h1 {
+	color: #2C3E50;
+	margin: 0;
+	font-size: 160%;
+	display: inline-block;
+}
+#destination h2 {
+	color: #BDC3C7;
+	margin: 0;
+	font-size: 90%;
+	display: block;
+}
+#destination > div:first-child {
+	padding: 20px;
+}
+#destination .top-line {
+	min-height: 53px;
+}
+#destination .top-line > div {
+	float: left;
+	padding-right: 10px;
+}
+#destination .top-line img {
+	display: inline-block;
+	border-radius: 100px;
+	width: 54px;
+}
+#destination .bottom-line > * {
+	color: #fff;
+	font-size: 80%;
+	background-color: #E74C3C;
+	float: left;
+	width: 120px;
+	height: 40px;
+	padding: 23px 10px 17px;
+	text-align: center;
+	line-height: 2em;
+}
+#destination .bottom-line > *:first-child {
+	background-color: #F1C40F;
+}
+#destination .bottom-line > *:last-child {
+	background-color: #2ECC71;
+}
+
+/*
+--------------------------------------
+Ikon fix
+--------------------------------------
+*/
+.fui-time-16:before {
+	display: block;
+	font-size: 16px;
+}
+
+.fui-location-16:before {
+	display: block;
+	font-size: 16px;
+}
+
+.fui-menu-16:before {
+	display: block;
+	font-size: 16px;
+}
+
+/*
+--------------------------------------
+Settings widget
+--------------------------------------
+*/
+#settings-layout {
+	width: 100%;
+	height: 480px;
+	margin: -480px auto 0 auto;
+	position: relative;
+	z-index: 12;
+	background: #fff;
+	max-width: 420px;
+	border-radius: 3px 3px 0 0;
+
+	transition: all 0.5s;
+	-moz-transition: all 0.5s;
+	-webkit-transition: all 0.5s;
+	-o-transition: all 0.5s;
+}
+#settings-layout.hidden {
+	margin-top: 0;
+}
+#settings-layout > div {
+	padding: 20px;
+}
+#settings-layout label {
+	display: block;
+}
+#settings-layout input[type="radio"]{
+	width: 10px;
+	display: none;
+}
+#settings-layout h2 {
+	margin-bottom: 10px;
+}
+#settings-layout a {
+	margin-top: 162px;
+}
+
+/*
+--------------------------------------
+For Nokia Lumia 800
+--------------------------------------
+*/
+@media (max-width: 480px) {
+	#destination .bottom-line > * {
+		width: 34%;
+		padding-left: 0;
+		padding-right: 0;
+	}
+	#destination .bottom-line > *:first-child {
+		width: 33%;
+	}
+	#destination .bottom-line > *:last-child {
+		width: 33%;
+	}
+}
+
+/*
+--------------------------------------
+For BIG desktop
+--------------------------------------
+*/
+@media (min-width: 1025px) {
+	#destination {
+		max-width: 840px;
+		width: 840px !important;
+		height: 97px;
+		margin-top: -97px;
+	}
+	#destination .top-line {
+		float: left;
+	}
+	#destination .bottom-line {
+		float: right;
+	}
+	#destination .bottom-line > * {
+		height: 57px;
+		padding: 35px 10px 5px;
+	}
+	#destination .bottom-line > *:last-child {
+		border-radius: 0 3px 0 0;
+	}
+}
