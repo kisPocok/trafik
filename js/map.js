@@ -147,16 +147,29 @@ var trfk = (function(window, $)
 				travelMode:  getTransportMode()
 			};
 			directionsDisplay.setMap(map);
-			directionsService.route(request, function(result, status) {
+			directionsService.route(request, function(response, status) {
 				if (status == google.maps.DirectionsStatus.OK) {
-					directionsDisplay.setDirections(result);
-					def.resolve(result);
+					directionsDisplay.setDirections(response);
+					// the sollution: http://stackoverflow.com/questions/4813728/change-individual-markers-in-google-maps-directions-api-v3
+					var leg = response.routes[ 0 ].legs[ 0 ];
+					makeMarker(leg.start_location, icons.start, "Kezdőpont");
+					makeMarker(leg.end_location, icons.end, 'Dohánybolt');
+					def.resolve(response);
 				} else {
 					def.reject(new Error('Hiba történt az útvonal tervezése közben!'));
 				}
 			});
 			return def.promise;
 		};
+
+		var makeMarker = function(position, icon, title) {
+			new google.maps.Marker({
+				position: position,
+				map:      map,
+				icon:     icon,
+				title:    title
+			});
+		}
 
 		/**
 		 * @param pos {google.maps.LatLng}
@@ -285,7 +298,8 @@ var trfk = (function(window, $)
 				new google.maps.LatLng(47.4843954, 19.0688688),
 				new google.maps.LatLng(47.482476499999995, 19.068560399999987),
 				new google.maps.LatLng(47.480176499999995, 19.068360399999987),
-				new google.maps.LatLng(47.514476, 19.057074)
+				new google.maps.LatLng(47.514476, 19.057074),
+				new google.maps.LatLng(47.504476, 19.157074),
 			];
 			var random = Math.floor(Math.random()*traffikList.length);
 			return traffikList[random];
@@ -389,9 +403,31 @@ var trfk = (function(window, $)
 		 * INIT CODE
 		 */
 		var map, transportMode;
-		var directionsDisplay = new google.maps.DirectionsRenderer();
+		var directionsDisplay = new google.maps.DirectionsRenderer({suppressMarkers: true});
 		var directionsService = new google.maps.DirectionsService();
 		var geocoder          = new google.maps.Geocoder();
+		var icons = {
+			start: new google.maps.MarkerImage(
+				// URL
+				'http://mapicons.nicolasmollet.com/wp-content/uploads/mapicons/shape-default/color-e74c3c/shapecolor-color/shadow-1/border-dark/symbolstyle-white/symbolshadowstyle-dark/gradient-no/male-2.png',
+				// (width,height)
+				new google.maps.Size(32, 37),
+				// The origin point (x,y)
+				new google.maps.Point(0, 0),
+				// The anchor point (x,y)
+				new google.maps.Point(16, 37)
+			),
+			end: new google.maps.MarkerImage(
+				// URL
+				'http://mapicons.nicolasmollet.com/wp-content/uploads/mapicons/shape-default/color-f1c40f/shapecolor-color/shadow-1/border-dark/symbolstyle-white/symbolshadowstyle-dark/gradient-no/smoking.png',
+				// (width,height)
+				new google.maps.Size(32, 37),
+				// The origin point (x,y)
+				new google.maps.Point(0, 0),
+				// The anchor point (x,y)
+				new google.maps.Point(16, 37)
+			)
+		};
 
 		Q.fcall(function() {
 				map = initializeMap()

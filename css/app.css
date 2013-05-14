@@ -64,12 +64,14 @@ Destination widget
 	margin: 0;
 	font-size: 160%;
 	display: inline-block;
+	white-space: nowrap;
 }
 #destination h2 {
 	color: #BDC3C7;
 	margin: 0;
 	font-size: 90%;
 	display: block;
+	white-space: nowrap;
 }
 #destination > div:first-child {
 	padding: 20px;
