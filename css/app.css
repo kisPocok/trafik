@@ -181,11 +181,55 @@ Settings layout
 }
 /*
 --------------------------------------
-Legal layout
+Welcome layout
 --------------------------------------
 */
+#welcome {
+	background-color: #e35c4a;
+}
+#welcome h1,
+#welcome h2 {
+	position: relative;
+	z-index: 12;
 
+	color: rgba(255, 255, 255, 0.8);
+	font-size: 72px;
+	font-weight: bold;
+	font-family: HelveticaNeue, Helvetica, Arial, sans-serif;
+	-webkit-font-smoothing: subpixel-antialiased !important;
+}
+#welcome h1 {
+	margin-top: 200px;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+	width: 320px;
+}
+#welcome h2 {
+	font-size: 32px;
+}
+#welcome .container {
+	position: absolute;
+	width: 800px;
+	height: 480px;
+	top: 20%;
+	left: 50%;
+	margin-top: -240px;
+	margin-left: -400px;
+	z-index: 11;
+}
+#welcome .phone {
+	background-image: url(../images/welcome-1100x1000.jpg);
+	background-repeat: no-repeat;
+	background-position: center center;
 
+	width: 1100px;
+	height: 1000px;
+	position: absolute;
+	left: 50%;
+	margin-left: -500px;
+	top: 0px;
+	z-index: 10;
+
+}
 /*
 --------------------------------------
 For Nokia Lumia 800
