@@ -38,10 +38,25 @@ var trfk = (function(window, $)
 			var params = {
 				center:    loadUserLastLocation(),
 				zoom:      16,
-				mapTypeId: google.maps.MapTypeId.ROADMAP
+				mapTypeId: google.maps.MapTypeId.ROADMAP,
+				streetViewControl: true
 			};
 			return new google.maps.Map(container, params);
 		};
+
+		/**
+		 * @param map {google.maps.Map}
+		 * @returns {*}
+		 */
+		var initializeStreetView = function(map)
+		{
+			var panorama = map.getStreetView();
+			panorama.setPov({
+				heading: 265,
+				pitch:   0
+			});
+			return panorama;
+		}
 
 		/**
 		 * @returns {Q.defer().promise}
@@ -80,16 +95,8 @@ var trfk = (function(window, $)
 		 */
 		var showUserLocation = function(pos)
 		{
-			/*
-			var infowindow = new google.maps.InfoWindow({
-				map:      map,
-				position: pos,
-				content:  'Location found using HTML5.'
-			});
-			*/
 			map.setCenter(pos);
 		};
-
 
 		/**
 		 * @param pos {google.maps.LatLng}
@@ -150,6 +157,7 @@ var trfk = (function(window, $)
 			directionsService.route(request, function(response, status) {
 				if (status == google.maps.DirectionsStatus.OK) {
 					response.request = request;
+					streetView.setPosition(destinationPos);
 					directionsDisplay.setDirections(response);
 					/*
 					// the sollution: http://stackoverflow.com/questions/4813728/change-individual-markers-in-google-maps-directions-api-v3
@@ -201,6 +209,8 @@ var trfk = (function(window, $)
 						marker.getPosition()
 					])
 						.spread(navigateUserToDestination)
+						.then(transformNavigationResponse)
+						.then(populateDestionationLayout)
 						.done();
 				});
 				markers.push(marker);
@@ -225,40 +235,46 @@ var trfk = (function(window, $)
 			return def.promise;
 		}
 
-		var transformNavigationResponse = function(navigationResponse, locationInfo)
+		var transformNavigationResponse = function(navigationResponse)
 		{
-			var d = navigationResponse.routes[0].legs[0];
+			var def = Q.defer();
 			var destinationPos = new google.maps.LatLng(
 				navigationResponse.request.destination.lat(),
 				navigationResponse.request.destination.lng()
 			);
 
-			var street_number, route, sublocality, locality;
-			$(locationInfo[0].address_components).each(function(i, item) {
-				if ($.inArray('street_number', item.types) > -1) {
-					street_number = item.short_name;
-				} else if ($.inArray('route', item.types) > -1) {
-					route = item.short_name;
-				} else if ($.inArray('sublocality', item.types) > -1) {
-					sublocality = item.short_name;
-				} else if ($.inArray('locality', item.types) > -1) {
-					locality = item.short_name;
-				}
-			});
-			var title = route + ' ' + street_number + '.';
-			var subtitle = locality;
-			if (sublocality) {
-				// TODO és ha nem egy kerületben van!
-				subtitle += ', ' + sublocality;
-			}
-
-			return {
-				address:     title,
-				address2:    subtitle,
-				distance:    getDistanceText(d.distance.value, d.distance.text),
-				duration:    getDateText(d.duration.value, d.duration.text),
-				destination: destinationPos
-			};
+			getLocationInfo(destinationPos)
+				.then(function(locationInfo)
+				{
+					var d = navigationResponse.routes[0].legs[0];
+					var street_number, route, sublocality, locality;
+					$(locationInfo[0].address_components).each(function(i, item) {
+						if ($.inArray('street_number', item.types) > -1) {
+							street_number = item.short_name;
+						} else if ($.inArray('route', item.types) > -1) {
+							route = item.short_name;
+						} else if ($.inArray('sublocality', item.types) > -1) {
+							sublocality = item.short_name;
+						} else if ($.inArray('locality', item.types) > -1) {
+							locality = item.short_name;
+						}
+					});
+					var title = route + ' ' + street_number + '.';
+					var subtitle = locality;
+					if (sublocality) {
+						// TODO és ha nem egy kerületben van!
+						subtitle += ', ' + sublocality;
+					}
+					def.resolve({
+						address:     title,
+						address2:    subtitle,
+						distance:    getDistanceText(d.distance.value, d.distance.text),
+						duration:    getDateText(d.duration.value, d.duration.text),
+						destination: destinationPos
+					});
+				})
+				.done();
+			return def.promise;
 		};
 
 		/**
@@ -270,7 +286,14 @@ var trfk = (function(window, $)
 			var divs = des.find('.bottom-line > *');
 			var src  = getStreetViewImage(data.destination, 100, 100);
 
-			des.find('.top-line > div:first-child').html('<img src="' + src + '" />')
+			des.find('.top-line > div:first-child')
+				.html('<img src="' + src + '" />')
+				.find('img')
+				.click(function(event) {
+					// enable street view
+					var toggle = streetView.getVisible();
+					streetView.setVisible(!toggle);
+				});
 			des.find('h1').text(data.address);
 			des.find('h2').text(data.address2);
 			$(divs.get(0)).text(data.distance);
@@ -436,18 +459,7 @@ var trfk = (function(window, $)
 					];
 				})
 				.spread(navigateUserToDestination)
-				.then(function(response)
-				{
-					var pos = new google.maps.LatLng(
-						response.request.destination.lat(),
-						response.request.destination.lng()
-					);
-					return [
-						response,
-						getLocationInfo(pos)
-					];
-				})
-				.spread(transformNavigationResponse)
+				.then(transformNavigationResponse)
 				.then(populateDestionationLayout)
 				.fail(defaultErrorHandler)
 				.done();
@@ -477,7 +489,7 @@ var trfk = (function(window, $)
 		/**
 		 * INIT CODE
 		 */
-		var map, markers, markerCluster, transportMode;
+		var map, streetView, markers, markerCluster, transportMode;
 		var directionsDisplay = new google.maps.DirectionsRenderer(/*{suppressMarkers: true}*/);
 		var directionsService = new google.maps.DirectionsService();
 		var geocoder          = new google.maps.Geocoder();
@@ -509,13 +521,15 @@ var trfk = (function(window, $)
 		Q.fcall(getUserLocation)
 			.then(function(userPos)
 			{
-				map     = initializeMap();
-				markers = getLocationMarkers();
+				map        = initializeMap();
+				streetView = initializeStreetView(map);
+				markers    = getLocationMarkers();
 
 				// TODO
 				google.maps.event.addListener(directionsDisplay, 'directions_changed', function() {
-					console.log('directions_changed')
+					console.log('directions_changed TODO')
 				});
+
 				markerCluster = new MarkerClusterer(map, markers, {
 					maxZoom: 14, gridSize: 45
 				});
