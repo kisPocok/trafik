@@ -134,10 +134,10 @@ Ikon fix
 
 /*
 --------------------------------------
-Settings widget
+Standard layout definitions
 --------------------------------------
 */
-#settings-layout {
+.layout {
 	width: 100%;
 	height: 480px;
 	margin: -480px auto 0 auto;
@@ -152,12 +152,20 @@ Settings widget
 	-webkit-transition: all 0.5s;
 	-o-transition: all 0.5s;
 }
-#settings-layout.hidden {
+.layout.hidden {
 	margin-top: 0;
 }
-#settings-layout > div {
+.layout > div {
 	padding: 20px;
 }
+.layout h2 {
+	margin: 0 0 10px 0;
+}
+/*
+--------------------------------------
+Settings layout
+--------------------------------------
+*/
 #settings-layout label {
 	display: block;
 }
@@ -168,9 +176,15 @@ Settings widget
 #settings-layout h2 {
 	margin: 0 0 10px 0;
 }
-#settings-layout a {
-	margin-top: 100px;
+#settings-layout .legal {
+	margin-top: 80px;
 }
+/*
+--------------------------------------
+Legal layout
+--------------------------------------
+*/
+
 
 /*
 --------------------------------------
@@ -216,7 +230,7 @@ For BIG desktop
 	#destination .bottom-line > *:last-child {
 		border-radius: 0 3px 0 0;
 	}
-	#settings-layout a {
-		margin-top: 162px;
+	#settings-layout .legal {
+		margin-top: 132px;
 	}
 }

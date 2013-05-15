@@ -196,8 +196,12 @@ var trfk = (function(window, $)
 				var marker = createMarker(pos, icon, 'Traffik');
 				google.maps.event.addListener(marker, 'click', function()
 				{
-					map.setZoom(8);
-					map.setCenter(marker.getPosition());
+					Q.all([
+						getUserLocation(),
+						marker.getPosition()
+					])
+						.spread(navigateUserToDestination)
+						.done();
 				});
 				markers.push(marker);
 			});
@@ -336,17 +340,32 @@ var trfk = (function(window, $)
 
 		var activateUI = function()
 		{
-			$('.settings').click(function(event) {
+			$('.settings').click(function(event)
+			{
 				event.stopPropagation();
 				$('#destination, #settings-layout').toggleClass('hidden');
 				return false;
 			});
 
+			$('.legal').click(function(event)
+			{
+				event.stopPropagation();
+				$('#legal').removeClass('hidden');
+			});
+
+			$('#legal').find('.btn').click(function(event)
+			{
+				event.stopPropagation();
+				$('#legal').addClass('hidden');
+			});
+
 			$('.radio')
-				.click(function(event) {
+				.click(function(event)
+				{
 					var element = $(event.target);
 					if (element.hasClass('radio')) {
-						$('#destination, #settings-layout').toggleClass('hidden');
+						$('#destination').removeClass('hidden');
+						$('#settings-layout').addClass('hidden');
 					} else if (element.is('input')) {
 						setTransportMode(element.attr('value'));
 						navigateUserToNearestTraffic();
