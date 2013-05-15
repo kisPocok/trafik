@@ -201,7 +201,7 @@ var trfk = (function(window, $)
 			);
 			$(locationDataList).each(function(i, data) {
 				var pos = new google.maps.LatLng(data[1], data[0]);
-				var marker = createMarker(pos, icon, 'Traffik ' + i);
+				var marker = createMarker(pos, icon, 'Trafik ' + i);
 				google.maps.event.addListener(marker, 'click', function()
 				{
 					Q.all([
@@ -351,7 +351,7 @@ var trfk = (function(window, $)
 		 */
 		var getRandomPoint = function()
 		{
-			var random = Math.floor(Math.random()*traffikLocationList.length);
+			var random = Math.floor(Math.random()*locationDataList.length);
 			var trafik = locationDataList[random];
 			return new google.maps.LatLng(trafik[1], trafik[0]);
 		};
@@ -566,5 +566,5 @@ var trfk = (function(window, $)
 }(window, jQuery));
 
 $(function() {
-	window.traffik = trfk.getInstance();
+	window.trafik = trfk.getInstance();
 });
