@@ -1,13 +1,12 @@
 <!DOCTYPE html>
-<html>
+<html manifest="trafik.appcache">
 <head>
 	<meta charset="UTF-8" />
+	<title>Trafik</title>
 	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<meta name="apple-mobile-web-app-status-bar-style" content="black">
 	<meta name="apple-mobile-web-app-title" content="Trafik">
-
-	<title>Trafik</title>
 
 	<link rel="apple-touch-icon" href="apple-touch-icon-57x57-precomposed.png" />
 	<link rel="apple-touch-icon" sizes="72x72" href="apple-touch-icon-72x72-precomposed.png" />
@@ -19,13 +18,13 @@
 	<link href="css/flat-ui.css" rel="stylesheet">
 	<link href="css/app.css" rel="stylesheet">
 
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBTYqceLuszLWf1_yF9CExEitMtvkZQIzE&sensor=true&language=hu&libraries=geometry"></script>
-	<script src="http://google-maps-utility-library-v3.googlecode.com/svn/trunk/markerclusterer/src/markerclusterer_compiled.js"></script>
+	<script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyBTYqceLuszLWf1_yF9CExEitMtvkZQIzE&sensor=true&language=hu&libraries=geometry"></script>
+	<script src="js/google.maps.marker-cluster.js"></script>
+	<script src="js/jquery-1.9.1.min.js"></script>
 	<script src="js/q.min.js"></script>
 	<script src="js/flat-ui.inputs.js"></script>
 	<script src="js/data.js"></script>
-	<script src="js/map.js"></script>
+	<script src="js/app.js"></script>
 </head>
 <body>
   <div id="map-canvas"></div>
@@ -57,7 +56,6 @@
 		  </label>
 		  <p class="legal"><a href="#">Felhasználási feltételek</a></p>
 		  <a href="#"class="settings btn btn-large btn-block btn-success">Bezárás</a>
-		  <!--<a href="#" class="btn btn-large btn-block btn-danger">Beállítások törlése</a>-->
 	  </div>
   </div>
   <div id="legal" class="layout hidden">

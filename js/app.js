@@ -486,39 +486,36 @@ var trfk = (function(window, $)
 			return nearest;
 		}
 
+		var checkSoftwareUpdate = function()
+		{
+			var def = Q.defer();
+			window.addEventListener('load', function(e)
+			{
+				window.applicationCache.addEventListener('updateready', function(e)
+				{
+					if (window.applicationCache.status == window.applicationCache.UPDATEREADY) {
+						window.applicationCache.swapCache();
+						if (confirm('Új Trafik frissítések elérhetőek. Újraindúlhat a programot most?')) {
+							def.reject();
+							window.location.reload();
+						}
+					}
+				}, false);
+				def.resolve();
+			}, false);
+			return def.promise;
+		}
+
 		/**
 		 * INIT CODE
 		 */
 		var map, streetView, markers, markerCluster, transportMode;
-		var directionsDisplay = new google.maps.DirectionsRenderer(/*{suppressMarkers: true}*/);
+		var directionsDisplay = new google.maps.DirectionsRenderer();
 		var directionsService = new google.maps.DirectionsService();
 		var geocoder          = new google.maps.Geocoder();
-		/*
-		var icons = {
-			start: new google.maps.MarkerImage(
-				// URL
-				'http://mapicons.nicolasmollet.com/wp-content/uploads/mapicons/shape-default/color-e74c3c/shapecolor-color/shadow-1/border-dark/symbolstyle-white/symbolshadowstyle-dark/gradient-no/male-2.png',
-				// (width,height)
-				new google.maps.Size(32, 37),
-				// The origin point (x,y)
-				new google.maps.Point(0, 0),
-				// The anchor point (x,y)
-				new google.maps.Point(16, 37)
-			),
-			end: new google.maps.MarkerImage(
-				// URL
-				'http://mapicons.nicolasmollet.com/wp-content/uploads/mapicons/shape-default/color-f1c40f/shapecolor-color/shadow-1/border-dark/symbolstyle-white/symbolshadowstyle-dark/gradient-no/smoking.png',
-				// (width,height)
-				new google.maps.Size(32, 37),
-				// The origin point (x,y)
-				new google.maps.Point(0, 0),
-				// The anchor point (x,y)
-				new google.maps.Point(16, 37)
-			)
-		};
-		*/
 
-		Q.fcall(getUserLocation)
+		Q.fcall(checkSoftwareUpdate)
+			.then(getUserLocation)
 			.then(function(userPos)
 			{
 				map        = initializeMap();
