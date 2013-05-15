@@ -169,14 +169,33 @@ var trfk = (function(window, $)
 		 * @param icon {object}
 		 * @param title {string}
 		 * @returns {google.maps.Marker}
-		 *
-		var makeMarker = function(pos, icon, title) {
+		 */
+		var createMarker = function(pos, icon, title) {
 			return new google.maps.Marker({
 				position: pos,
-				map:      map,
+				//map:      map,
 				icon:     icon,
 				title:    title
 			});
+		}
+
+		/**
+		 * @returns {Array}
+		 */
+		var getLocationMarkers = function()
+		{
+			var markers = [];
+			var icon = new google.maps.MarkerImage(
+				'images/trafik-24x24.png',
+				new google.maps.Size(24, 24), // (width,height)
+				new google.maps.Point(0, 0),  // The origin point (x,y)
+				new google.maps.Point(12, 24) // The anchor point (x,y)
+			);
+			$(traffikLocationList).each(function(i, data) {
+				var pos = new google.maps.LatLng(data[1], data[0]);
+				markers.push(createMarker(pos, icon, 'Traffik'));
+			});
+			return markers;
 		}
 
 		/**
@@ -298,19 +317,15 @@ var trfk = (function(window, $)
 		};
 
 		/**
+		 * TODO ez csak ideiglenes. Be kell kotni a tobbi traffikot.
+		 *
 		 * @returns {google.maps.LatLng}
 		 */
 		var getDefaultLocation = function()
 		{
-			var traffikList = [
-				new google.maps.LatLng(47.4843954, 19.0688688),
-				new google.maps.LatLng(47.482476499999995, 19.068560399999987),
-				new google.maps.LatLng(47.480176499999995, 19.068360399999987),
-				new google.maps.LatLng(47.514476, 19.057074),
-				new google.maps.LatLng(47.504476, 19.157074),
-			];
-			var random = Math.floor(Math.random()*traffikList.length);
-			return traffikList[random];
+			var random = Math.floor(Math.random()*traffikLocationList.length);
+			var trafik = traffikLocationList[random];
+			return new google.maps.LatLng(trafik[1], trafik[0]);
 		};
 
 		var activateUI = function()
@@ -411,7 +426,7 @@ var trfk = (function(window, $)
 		/**
 		 * INIT CODE
 		 */
-		var map, transportMode;
+		var map, markerCluster, transportMode;
 		var directionsDisplay = new google.maps.DirectionsRenderer(/*{suppressMarkers: true}*/);
 		var directionsService = new google.maps.DirectionsService();
 		var geocoder          = new google.maps.Geocoder();
@@ -442,10 +457,13 @@ var trfk = (function(window, $)
 
 		Q.fcall(function()
 			{
-				map = initializeMap()
-				activateUI()
-				// disable scrolling
-				$(document).bind('touchmove', false);
+				map = initializeMap();
+				var markers = getLocationMarkers();
+				markerCluster = new MarkerClusterer(map, markers, {
+					maxZoom: 14, gridSize: 45
+				});
+				activateUI();
+				$(document).bind('touchmove', false); // disable scrolling
 			})
 			.then(showLocation)
 			.then(navigateUserToNearestTraffic)
