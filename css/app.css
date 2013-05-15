@@ -66,7 +66,6 @@ Destination widget
 	margin: 0;
 	font-size: 160%;
 	display: inline-block;
-	white-space: nowrap;
 }
 #destination h2 {
 	color: #BDC3C7;
@@ -83,6 +82,11 @@ Destination widget
 }
 #destination .top-line > div {
 	float: left;
+	max-width: 315px;
+	max-height: 66px;
+	overflow: hidden;
+}
+#destination .top-line > div:first-child {
 	padding-right: 10px;
 }
 #destination .top-line img {
@@ -192,7 +196,7 @@ For Nokia Lumia 800
 For BIG desktop
 --------------------------------------
 */
-@media (min-width: 1025px) {
+@media (min-width: 840px) {
 	#destination {
 		max-width: 840px;
 		width: 840px !important;

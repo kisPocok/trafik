@@ -193,7 +193,13 @@ var trfk = (function(window, $)
 			);
 			$(traffikLocationList).each(function(i, data) {
 				var pos = new google.maps.LatLng(data[1], data[0]);
-				markers.push(createMarker(pos, icon, 'Traffik'));
+				var marker = createMarker(pos, icon, 'Traffik');
+				google.maps.event.addListener(marker, 'click', function()
+				{
+					map.setZoom(8);
+					map.setCenter(marker.getPosition());
+				});
+				markers.push(marker);
 			});
 			return markers;
 		}
@@ -255,7 +261,7 @@ var trfk = (function(window, $)
 			var divs = des.find('.bottom-line > *');
 			var src  = getStreetViewImage(data.destination, 100, 100);
 
-			des.find('.top-line > div').html('<img src="' + src + '" />')
+			des.find('.top-line > div:first-child').html('<img src="' + src + '" />')
 			des.find('h1').text(data.address);
 			des.find('h2').text(data.address2);
 			$(divs.get(0)).text(data.distance);
