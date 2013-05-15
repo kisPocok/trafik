@@ -149,8 +149,8 @@ var trfk = (function(window, $)
 			directionsDisplay.setMap(map);
 			directionsService.route(request, function(response, status) {
 				if (status == google.maps.DirectionsStatus.OK) {
+					response.request = request;
 					directionsDisplay.setDirections(response);
-
 					/*
 					// the sollution: http://stackoverflow.com/questions/4813728/change-individual-markers-in-google-maps-directions-api-v3
 					var leg = response.routes[ 0 ].legs[ 0 ];
@@ -228,6 +228,11 @@ var trfk = (function(window, $)
 		var transformNavigationResponse = function(navigationResponse, locationInfo)
 		{
 			var d = navigationResponse.routes[0].legs[0];
+			var destinationPos = new google.maps.LatLng(
+				navigationResponse.request.destination.lat(),
+				navigationResponse.request.destination.lng()
+			);
+
 			var street_number, route, sublocality, locality;
 			$(locationInfo[0].address_components).each(function(i, item) {
 				if ($.inArray('street_number', item.types) > -1) {
@@ -252,7 +257,7 @@ var trfk = (function(window, $)
 				address2:    subtitle,
 				distance:    getDistanceText(d.distance.value, d.distance.text),
 				duration:    getDateText(d.duration.value, d.duration.text),
-				destination: navigationResponse.Nb.destination
+				destination: destinationPos
 			};
 		};
 
@@ -370,6 +375,7 @@ var trfk = (function(window, $)
 		var defaultErrorHandler = function(error)
 		{
 			console.error('Hiba történt!', error.message);
+			console.error(error.stack);
 		}
 
 		var activateUI = function()
@@ -432,9 +438,13 @@ var trfk = (function(window, $)
 				.spread(navigateUserToDestination)
 				.then(function(response)
 				{
+					var pos = new google.maps.LatLng(
+						response.request.destination.lat(),
+						response.request.destination.lng()
+					);
 					return [
 						response,
-						getLocationInfo(response.Nb.destination)
+						getLocationInfo(pos)
 					];
 				})
 				.spread(transformNavigationResponse)
@@ -458,7 +468,6 @@ var trfk = (function(window, $)
 				var distance = google.maps.geometry.spherical.computeDistanceBetween(pos, marker.getPosition());
 				min = Math.min(distance, min);
 				if (min == distance) {
-					console.log('KIVAASZTOTT')
 					nearest = marker;
 				}
 			});
