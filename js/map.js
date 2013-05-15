@@ -36,7 +36,7 @@ var trfk = (function(window, $)
 		{
 			var container = document.getElementById("map-canvas");
 			var params = {
-				center:    loadUserLastLocation() || getDefaultLocation(),
+				center:    loadUserLastLocation(),
 				zoom:      16,
 				mapTypeId: google.maps.MapTypeId.ROADMAP
 			};
@@ -150,6 +150,7 @@ var trfk = (function(window, $)
 			directionsService.route(request, function(response, status) {
 				if (status == google.maps.DirectionsStatus.OK) {
 					directionsDisplay.setDirections(response);
+
 					/*
 					// the sollution: http://stackoverflow.com/questions/4813728/change-individual-markers-in-google-maps-directions-api-v3
 					var leg = response.routes[ 0 ].legs[ 0 ];
@@ -173,7 +174,6 @@ var trfk = (function(window, $)
 		var createMarker = function(pos, icon, title) {
 			return new google.maps.Marker({
 				position: pos,
-				//map:      map,
 				icon:     icon,
 				title:    title
 			});
@@ -193,7 +193,7 @@ var trfk = (function(window, $)
 			);
 			$(traffikLocationList).each(function(i, data) {
 				var pos = new google.maps.LatLng(data[1], data[0]);
-				var marker = createMarker(pos, icon, 'Traffik');
+				var marker = createMarker(pos, icon, 'Traffik ' + i);
 				google.maps.event.addListener(marker, 'click', function()
 				{
 					Q.all([
@@ -321,60 +321,11 @@ var trfk = (function(window, $)
 		/**
 		 * @returns {google.maps.LatLng}
 		 */
-		var getNearestTraffic = function()
-		{
-			return getDefaultLocation();
-		};
-
-		/**
-		 * TODO ez csak ideiglenes. Be kell kotni a tobbi traffikot.
-		 *
-		 * @returns {google.maps.LatLng}
-		 */
-		var getDefaultLocation = function()
+		var getRandomPoint = function()
 		{
 			var random = Math.floor(Math.random()*traffikLocationList.length);
 			var trafik = traffikLocationList[random];
 			return new google.maps.LatLng(trafik[1], trafik[0]);
-		};
-
-		var activateUI = function()
-		{
-			$('.settings').click(function(event)
-			{
-				event.stopPropagation();
-				$('#destination, #settings-layout').toggleClass('hidden');
-				return false;
-			});
-
-			$('.legal').click(function(event)
-			{
-				event.stopPropagation();
-				$('#legal').removeClass('hidden');
-			});
-
-			$('#legal').find('.btn').click(function(event)
-			{
-				event.stopPropagation();
-				$('#legal').addClass('hidden');
-			});
-
-			$('.radio')
-				.click(function(event)
-				{
-					var element = $(event.target);
-					if (element.hasClass('radio')) {
-						$('#destination').removeClass('hidden');
-						$('#settings-layout').addClass('hidden');
-					} else if (element.is('input')) {
-						setTransportMode(element.attr('value'));
-						navigateUserToNearestTraffic();
-					}
-				})
-				.find('[value="' + getTransportMode() + '"]')
-				.attr('checked', 'checked')
-				.parent()
-				.addClass('checked');
 		};
 
 		/**
@@ -421,7 +372,46 @@ var trfk = (function(window, $)
 			console.error('Hiba történt!', error.message);
 		}
 
-		var showLocation = function()
+		var activateUI = function()
+		{
+			$('.settings').click(function(event)
+			{
+				event.stopPropagation();
+				$('#destination, #settings-layout').toggleClass('hidden');
+				return false;
+			});
+
+			$('.legal').click(function(event)
+			{
+				event.stopPropagation();
+				$('#legal').removeClass('hidden');
+			});
+
+			$('#legal').find('.btn').click(function(event)
+			{
+				event.stopPropagation();
+				$('#legal').addClass('hidden');
+			});
+
+			$('.radio')
+				.click(function(event)
+				{
+					var element = $(event.target);
+					if (element.hasClass('radio')) {
+						$('#destination').removeClass('hidden');
+						$('#settings-layout').addClass('hidden');
+					} else if (element.is('input')) {
+						setTransportMode(element.attr('value'));
+						navigateUserToNearestPoint();
+					}
+				})
+				.find('[value="' + getTransportMode() + '"]')
+				.attr('checked', 'checked')
+				.parent()
+				.addClass('checked');
+		};
+
+		var showUserLocation = function()
 		{
 			Q.fcall(getUserLocation)
 				.then(showUserLocation)
@@ -429,18 +419,23 @@ var trfk = (function(window, $)
 				.done();
 		};
 
-		var navigateUserToNearestTraffic =  function()
+		var navigateUserToNearestPoint =  function()
 		{
-			Q.all([
-					getUserLocation(),
-					getNearestTraffic()
-				])
+			Q.fcall(getUserLocation)
+				.then(function(userLocation) {
+					var marker = getNearestPoint(userLocation, markers);
+					return [
+						userLocation,
+						marker.getPosition()
+					];
+				})
 				.spread(navigateUserToDestination)
 				.then(function(response)
 				{
-					// TODO pos-nak a célpontot kéne használni!
-					var pos = getDefaultLocation();
-					return [response, getLocationInfo(pos)];
+					return [
+						response,
+						getLocationInfo(response.Nb.destination)
+					];
 				})
 				.spread(transformNavigationResponse)
 				.then(populateDestionationLayout)
@@ -449,9 +444,29 @@ var trfk = (function(window, $)
 		};
 
 		/**
+		 *
+		 * @param pos {google.maps.LatLng}
+		 * @param markers {Array}
+		 * @returns {google.maps.marker} marker
+		 */
+		var getNearestPoint = function(pos, markers)
+		{
+			var nearest, min = 10000000;
+			$(markers).each(function(i, marker)
+			{
+				var distance = google.maps.geometry.spherical.computeDistanceBetween(pos, marker.getPosition());
+				min = Math.min(distance, min);
+				if (min == distance) {
+					nearest = marker;
+				}
+			});
+			return nearest;
+		}
+
+		/**
 		 * INIT CODE
 		 */
-		var map, markerCluster, transportMode;
+		var map, markers, markerCluster, transportMode;
 		var directionsDisplay = new google.maps.DirectionsRenderer(/*{suppressMarkers: true}*/);
 		var directionsService = new google.maps.DirectionsService();
 		var geocoder          = new google.maps.Geocoder();
@@ -480,26 +495,31 @@ var trfk = (function(window, $)
 		};
 		*/
 
-		Q.fcall(function()
+		Q.fcall(getUserLocation)
+			.then(function(userPos)
 			{
-				map = initializeMap();
-				var markers = getLocationMarkers();
+				map     = initializeMap();
+				markers = getLocationMarkers();
+
+				// TODO
+				google.maps.event.addListener(directionsDisplay, 'directions_changed', function() {
+					console.log('directions_changed')
+				});
 				markerCluster = new MarkerClusterer(map, markers, {
 					maxZoom: 14, gridSize: 45
 				});
 				activateUI();
 				$(document).bind('touchmove', false); // disable scrolling
 			})
-			.then(showLocation)
-			.then(navigateUserToNearestTraffic)
+			.then(navigateUserToNearestPoint)
 			.fail(defaultErrorHandler)
 			.done();
 
 		return {
 			initMap:      initializeMap,
 			getLocation:  getUserLocation,
-			showLocation: showLocation,
-			navigateTo:   navigateUserToNearestTraffic,
+			showLocation: showUserLocation,
+			navigateTo:   navigateUserToNearestPoint,
 			// FOR DEBUG ONLY
 			debug: {
 				map: getMap
