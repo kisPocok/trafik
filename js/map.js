@@ -101,8 +101,8 @@ var trfk = (function(window, $)
 				var expire = 60000; // 1 minute
 			}
 			window.localStorage.setItem('user-last-location-expire', getTime() + expire);
-			window.localStorage.setItem('user-last-location-kb', pos.kb);
-			window.localStorage.setItem('user-last-location-lb', pos.lb);
+			window.localStorage.setItem('user-last-location-lat', pos.lat());
+			window.localStorage.setItem('user-last-location-lng', pos.lng());
 		};
 
 		/**
@@ -121,16 +121,16 @@ var trfk = (function(window, $)
 			}
 
 			return new google.maps.LatLng(
-				window.localStorage.getItem('user-last-location-kb'),
-				window.localStorage.getItem('user-last-location-lb')
+				window.localStorage.getItem('user-last-location-lat'),
+				window.localStorage.getItem('user-last-location-lng')
 			);
 		};
 
 		var clearUserLastLocation = function()
 		{
 			window.localStorage.removeItem('user-last-location-expire');
-			window.localStorage.removeItem('user-last-location-kb');
-			window.localStorage.removeItem('user-last-location-lb');
+			window.localStorage.removeItem('user-last-location-lat');
+			window.localStorage.removeItem('user-last-location-lng');
 		};
 
 		/**
@@ -191,7 +191,7 @@ var trfk = (function(window, $)
 				new google.maps.Point(0, 0),  // The origin point (x,y)
 				new google.maps.Point(12, 24) // The anchor point (x,y)
 			);
-			$(traffikLocationList).each(function(i, data) {
+			$(locationDataList).each(function(i, data) {
 				var pos = new google.maps.LatLng(data[1], data[0]);
 				var marker = createMarker(pos, icon, 'Traffik ' + i);
 				google.maps.event.addListener(marker, 'click', function()
@@ -311,7 +311,7 @@ var trfk = (function(window, $)
 			return [
 				'http://maps.googleapis.com/maps/api/streetview?size=',
 				sizeX, 'x', sizeY,
-				'&location=', pos.kb, ',', pos.lb,
+				'&location=', pos.lat(), ',', pos.lng(),
 				'&heading=08',
 				'&pitch=0',
 				'&sensor=false'
@@ -324,7 +324,7 @@ var trfk = (function(window, $)
 		var getRandomPoint = function()
 		{
 			var random = Math.floor(Math.random()*traffikLocationList.length);
-			var trafik = traffikLocationList[random];
+			var trafik = locationDataList[random];
 			return new google.maps.LatLng(trafik[1], trafik[0]);
 		};
 
@@ -451,12 +451,14 @@ var trfk = (function(window, $)
 		 */
 		var getNearestPoint = function(pos, markers)
 		{
-			var nearest, min = 10000000;
+			var nearest = false;
+			var min = 10000000;
 			$(markers).each(function(i, marker)
 			{
 				var distance = google.maps.geometry.spherical.computeDistanceBetween(pos, marker.getPosition());
 				min = Math.min(distance, min);
 				if (min == distance) {
+					console.log('KIVAASZTOTT')
 					nearest = marker;
 				}
 			});

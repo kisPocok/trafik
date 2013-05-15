@@ -1,4 +1,4 @@
-var traffikLocationList = [
+var locationDataList = [
 [19.064470,47.502815],
 [19.049343,47.513298],
 [19.050747,47.517262],
