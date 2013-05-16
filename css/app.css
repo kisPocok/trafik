@@ -192,19 +192,34 @@ Welcome layout
 	position: relative;
 	z-index: 12;
 	width: 325px;
+	margin-left: 20px;
 
 	color: rgba(255, 255, 255, 0.8);
 	font-size: 72px;
 	font-weight: bold;
 	font-family: HelveticaNeue, Helvetica, Arial, sans-serif;
-	-webkit-font-smoothing: subpixel-antialiased !important;
 }
 #welcome h1 {
 	margin-top: 200px;
 	border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+	-webkit-font-smoothing: subpixel-antialiased !important;
 }
 #welcome h2 {
-	font-size: 32px;
+	font-size: 26px;
+	font-weight: 100;
+}
+#welcome a {
+	margin: 20px;
+	width: 150px;
+	position: relative;
+	z-index: 13;
+
+	background: transparent;
+	border: 1px solid rgba(255,255,255,0.8);
+}
+#welcome a:hover {
+	background: rgba(255,255,255,0.8);
+	color: #e35c4a;
 }
 #welcome .container {
 	position: absolute;
@@ -217,7 +232,7 @@ Welcome layout
 	z-index: 11;
 }
 #welcome .phone {
-	background-image: url(../images/welcome-1100x1000.jpg);
+	background-image: url(../images/welcome-1100x990.png);
 	background-repeat: no-repeat;
 	background-position: center center;
 
@@ -230,6 +245,15 @@ Welcome layout
 	z-index: 10;
 
 }
+@media (max-width: 810px) {
+	#welcome h1 {
+	}
+	#welcome .container {
+		width: 100%;
+		margin-left: -50%;
+	}
+}
+
 /*
 --------------------------------------
 For Nokia Lumia 800
