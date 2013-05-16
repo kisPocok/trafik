@@ -30,13 +30,21 @@ var trfk = (function(window, $)
 	function init()
 	{
 		/**
+		 * Variables
+		 */
+		var map, streetView, markers, markerCluster, transportMode;
+		var directionsDisplay = new google.maps.DirectionsRenderer();
+		var directionsService = new google.maps.DirectionsService();
+		var geocoder          = new google.maps.Geocoder();
+
+		/**
 		 * @returns {google.maps.Map}
 		 */
 		var initializeMap = function()
 		{
 			var container = document.getElementById("map-canvas");
 			var params = {
-				center:    loadUserLastLocation(),
+				center:    loadUserLastLocation()||getDefaultLocation(),
 				zoom:      16,
 				mapTypeId: google.maps.MapTypeId.ROADMAP,
 				streetViewControl: true
@@ -56,7 +64,22 @@ var trfk = (function(window, $)
 				pitch:   0
 			});
 			return panorama;
-		}
+		};
+
+		var initForAndroid = function()
+		{
+			if(navigator.userAgent.match(/Android/i)){
+				window.scrollTo(0,1);
+			}
+		};
+
+		/**
+		 * @returns {google.maps.LatLng}
+		 */
+		var getDefaultLocation = function()
+		{
+			return new google.maps.LatLng(47.497912, 19.040235);
+		};
 
 		/**
 		 * @returns {Q.defer().promise}
@@ -64,18 +87,14 @@ var trfk = (function(window, $)
 		var getUserLocation = function()
 		{
 			var def = Q.defer();
-
-			// Load from cache
 			var lastPos = loadUserLastLocation();
 			if (lastPos) {
-				console.log('Get user location from cache')
 				def.resolve(lastPos);
 				return def.promise;
 			}
 
 			if(navigator.geolocation) {
 				navigator.geolocation.getCurrentPosition(function(position) {
-					console.log('Renew user location')
 					var pos = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
 					saveUserLastLocation(pos);
 					def.resolve(pos);
@@ -88,14 +107,6 @@ var trfk = (function(window, $)
 				def.reject(new Error('Nem támogatott böngésző!'));
 			}
 			return def.promise;
-		};
-
-		/**
-		 * @param pos {google.maps.LatLng}
-		 */
-		var showUserLocation = function(pos)
-		{
-			map.setCenter(pos);
 		};
 
 		/**
@@ -159,12 +170,6 @@ var trfk = (function(window, $)
 					response.request = request;
 					streetView.setPosition(destinationPos);
 					directionsDisplay.setDirections(response);
-					/*
-					// the sollution: http://stackoverflow.com/questions/4813728/change-individual-markers-in-google-maps-directions-api-v3
-					var leg = response.routes[ 0 ].legs[ 0 ];
-					makeMarker(leg.start_location, icons.start, "Kezdőpont");
-					makeMarker(leg.end_location, icons.end, 'Dohánybolt');
-					*/
 					def.resolve(response);
 				} else {
 					def.reject(new Error('Hiba történt az útvonal tervezése közben!'));
@@ -179,13 +184,14 @@ var trfk = (function(window, $)
 		 * @param title {string}
 		 * @returns {google.maps.Marker}
 		 */
-		var createMarker = function(pos, icon, title) {
+		var createMarker = function(pos, icon, title)
+		{
 			return new google.maps.Marker({
 				position: pos,
 				icon:     icon,
 				title:    title
 			});
-		}
+		};
 
 		/**
 		 * @returns {Array}
@@ -216,7 +222,7 @@ var trfk = (function(window, $)
 				markers.push(marker);
 			});
 			return markers;
-		}
+		};
 
 		/**
 		 * @param pos {google.maps.LatLng}
@@ -233,7 +239,7 @@ var trfk = (function(window, $)
 				}
 			});
 			return def.promise;
-		}
+		};
 
 		var transformNavigationResponse = function(navigationResponse)
 		{
@@ -284,7 +290,7 @@ var trfk = (function(window, $)
 		{
 			var des  = $('#destination');
 			var divs = des.find('.bottom-line > *');
-			var src  = getStreetViewImage(data.destination, 100, 100);
+			var src  = getStreetViewImageUrl(data.destination, 100, 100);
 
 			des.find('.top-line > div:first-child')
 				.html('<img src="' + src + '" />')
@@ -334,7 +340,7 @@ var trfk = (function(window, $)
 		 * @param sizeY {number}
 		 * @returns {string}
 		 */
-		var getStreetViewImage = function(pos, sizeX, sizeY)
+		var getStreetViewImageUrl = function(pos, sizeX, sizeY)
 		{
 			return [
 				'http://maps.googleapis.com/maps/api/streetview?size=',
@@ -363,7 +369,7 @@ var trfk = (function(window, $)
 		{
 			window.localStorage.setItem('user-transport-mode', mode);
 			transportMode = mode;
-		}
+		};
 
 		/**
 		 * @returns {google.maps.TravelMode.*}
@@ -374,14 +380,6 @@ var trfk = (function(window, $)
 				return window.localStorage.getItem('user-transport-mode');
 			}
 			return google.maps.TravelMode.WALKING;
-		}
-
-		/**
-		 * @returns {google.maps.Map}
-		 */
-		var getMap = function()
-		{
-			return map;
 		};
 
 		/**
@@ -399,7 +397,7 @@ var trfk = (function(window, $)
 		{
 			console.error('Hiba történt!', error.message);
 			console.error(error.stack);
-		}
+		};
 
 		var activateUI = function()
 		{
@@ -440,14 +438,23 @@ var trfk = (function(window, $)
 				.addClass('checked');
 		};
 
+		/**
+		 * public command
+		 */
 		var showUserLocation = function()
 		{
 			Q.fcall(getUserLocation)
-				.then(showUserLocation)
+				.then(function(pos)
+				{
+					map.setCenter(pos);
+				})
 				.fail(defaultErrorHandler)
 				.done();
 		};
 
+		/**
+		 * public command
+		 */
 		var navigateUserToNearestPoint =  function()
 		{
 			Q.fcall(getUserLocation)
@@ -484,7 +491,7 @@ var trfk = (function(window, $)
 				}
 			});
 			return nearest;
-		}
+		};
 
 		var checkSoftwareUpdate = function()
 		{
@@ -504,48 +511,49 @@ var trfk = (function(window, $)
 				def.resolve();
 			}, false);
 			return def.promise;
-		}
+		};
+
+		var constructor = function()
+		{
+			Q.fcall(checkSoftwareUpdate)
+				.then(getUserLocation)
+				.then(function(userPos)
+				{
+					var markerParams  = {
+						maxZoom:  14,
+						gridSize: 45
+					};
+
+					initForAndroid();
+					map           = initializeMap();
+					streetView    = initializeStreetView(map);
+					markers       = getLocationMarkers();
+					markerCluster = new MarkerClusterer(map, markers, markerParams);
+
+					/* TODO handle hiding markers because layout hangs on map
+					google.maps.event.addListener(directionsDisplay, 'directions_changed', function() {
+						console.log('directions_changed TODO')
+					});
+					*/
+
+					activateUI();
+					$(document).bind('touchmove', false); // disable scrolling
+				})
+				.then(navigateUserToNearestPoint)
+				.fail(defaultErrorHandler)
+				.done();
+		};
 
 		/**
-		 * INIT CODE
+		 * Public methods and vars
 		 */
-		var map, streetView, markers, markerCluster, transportMode;
-		var directionsDisplay = new google.maps.DirectionsRenderer();
-		var directionsService = new google.maps.DirectionsService();
-		var geocoder          = new google.maps.Geocoder();
-
-		Q.fcall(checkSoftwareUpdate)
-			.then(getUserLocation)
-			.then(function(userPos)
-			{
-				map        = initializeMap();
-				streetView = initializeStreetView(map);
-				markers    = getLocationMarkers();
-
-				// TODO
-				google.maps.event.addListener(directionsDisplay, 'directions_changed', function() {
-					console.log('directions_changed TODO')
-				});
-
-				markerCluster = new MarkerClusterer(map, markers, {
-					maxZoom: 14, gridSize: 45
-				});
-				activateUI();
-				$(document).bind('touchmove', false); // disable scrolling
-			})
-			.then(navigateUserToNearestPoint)
-			.fail(defaultErrorHandler)
-			.done();
-
 		return {
-			initMap:      initializeMap,
+			author:       '@kisPocok',
+			version:      '1.0',
+			init:         constructor,
 			getLocation:  getUserLocation,
 			showLocation: showUserLocation,
-			navigateTo:   navigateUserToNearestPoint,
-			// FOR DEBUG ONLY
-			debug: {
-				map: getMap
-			}
+			showNearest:  navigateUserToNearestPoint
 		};
 	}
 
@@ -562,6 +570,10 @@ var trfk = (function(window, $)
 	};
 }(window, jQuery));
 
-$(function() {
-	window.trafik = trfk.getInstance();
-});
+/**
+ * - All batteries concentrate forward firepower.
+ * - Spin up drives two and six!
+ * - All hands brace for warp jump on my mark!
+ * - Mark!
+ */
+$(trfk.getInstance().init);
