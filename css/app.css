@@ -191,6 +191,7 @@ Welcome layout
 #welcome h2 {
 	position: relative;
 	z-index: 12;
+	width: 325px;
 
 	color: rgba(255, 255, 255, 0.8);
 	font-size: 72px;
@@ -201,7 +202,6 @@ Welcome layout
 #welcome h1 {
 	margin-top: 200px;
 	border-bottom: 1px solid rgba(255, 255, 255, 0.4);
-	width: 320px;
 }
 #welcome h2 {
 	font-size: 32px;
