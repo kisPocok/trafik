@@ -582,7 +582,7 @@ $(function() {
 		trfk.getInstance().init()
 	};
 
-	if (("standalone" in window.navigator) && !window.navigator.standalone) {
+	if (("standalone" in window.navigator) && window.navigator.standalone) {
 		// telepített alkalmazás, indítás
 		start();
 	} else {
