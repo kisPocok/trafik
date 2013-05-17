@@ -1,7 +1,9 @@
 <?php
+
 $title       = "Trafik kereső";
 $appTitle    = "Trafik";
 $description = "Trafik kereső alkalmazás. Megkeresi neked a legközelebbit.";
+$add2home    = "Add a kezdőlapodhoz! Trafik kereső alkalmazást az `%icon` ikon megnyomásával telepítheted <strong>%device</strong> készülékedre.";
 $url         = "http://" . $_SERVER['HTTP_HOST'];
 
 ?><!DOCTYPE html>
@@ -10,6 +12,10 @@ $url         = "http://" . $_SERVER['HTTP_HOST'];
 	<meta charset="UTF-8" />
 	<title><?=$title; ?></title>
 	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="apple-mobile-web-app-title" content="<?=$title; ?>">
+
 	<meta name="robots" content="index, nofollow" />
 	<meta name="description" content="<?=$description; ?>" />
 	<meta property="og:title" content="<?=$title; ?>" />
@@ -27,24 +33,79 @@ $url         = "http://" . $_SERVER['HTTP_HOST'];
 	<link rel="apple-touch-icon" sizes="144x144" href="apple-touch-icon-144x144-precomposed.png" />
 	<link rel="canonical" href="<?=$url; ?>" />
 
-	<link href="css/bootstrap.min.css" rel="stylesheet">
-	<link href="css/add2home.css" rel="stylesheet">
-	<link href="css/flat-ui.css" rel="stylesheet">
-	<link href="css/app.css" rel="stylesheet">
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+	<link rel="stylesheet" href="css/add2home.css">
+	<link rel="stylesheet" href="css/flat-ui.css">
+	<link rel="stylesheet" href="css/app.css">
 
-	<script>
-		var addToHomeConfig = {
-			message: 'Add a kezdőlapodhoz! Trafik kereső alkalmazást az `%icon` ikon megnyomásával telepítheted <strong>%device</strong> készülékedre.'
-		};
-	</script>
+	<script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyBTYqceLuszLWf1_yF9CExEitMtvkZQIzE&sensor=true&language=hu&libraries=geometry"></script>
+	<script src="js/google.maps.marker-cluster.js"></script>
+	<script src="js/jquery-1.9.1.min.js"></script>
+	<script src="js/q.min.js"></script>
+	<script src="js/flat-ui.inputs.js"></script>
+	<script src="data.php"></script>
+	<script src="js/app.js"></script>
+	<script>var addToHomeConfig = { autostart:false, message:'<?=$add2home; ?>'};</script>
 	<script src="js/add2home.js"></script>
 </head>
-<body id="welcome">
-<div class="container">
+<body>
+
+<!-- Installer layout -->
+<div id="install">
 	<h1><?=$appTitle; ?></h1>
 	<h2>Megkeresi a legközelebbit.</h2>
-	<a href="map.html" class="btn btn-large btn-block">Próbáld ki!</a>
+	<a id="run" href="#" class="btn btn-large btn-block">Próbáld ki!</a>
 	<div class="phone"></div>
+</div>
+
+<!-- Google map container -->
+<div id="map-canvas" style="display:none;"></div>
+
+<!-- User Interface -->
+<div id="destination" style="display:none;">
+	<div class="top-line">
+		<div><!-- photo goes here --></div>
+		<div>
+			<h1>Közeli trafik keresése</h1>
+			<h2></h2>
+		</div>
+	</div>
+	<div class="bottom-line">
+		<span class="fui-location-16"></span>
+		<span class="fui-time-16"></span>
+		<a href="#" class="settings fui-menu-16">Beállítások</a>
+	</div>
+</div>
+
+<!-- Settings page -->
+<div id="settings-layout" class="layout hidden" style="display:none;">
+	<div>
+		<h2>Útvonaltervezés módja</h2>
+		<label class="radio">
+			<input type="radio" name="travelMode" value="WALKING"> Gyalog
+		</label>
+		<label class="radio">
+			<input type="radio" name="travelMode" value="TRANSIT"> Tömegközlekedéssel
+		</label>
+		<label class="radio">
+			<input type="radio" name="travelMode" value="DRIVING"> Autóval
+		</label>
+		<p class="legal"><a href="#">Felhasználási feltételek</a></p>
+		<a href="#"class="settings btn btn-large btn-block btn-success">Bezárás</a>
+	</div>
+</div>
+
+<!-- Term of Use page -->
+<div id="legal" class="layout hidden" style="display:none;">
+	<div>
+		<h2>Felhasználási feltételek</h2>
+		<p>Szeretném, hogy tudd, mert fontos. A térképet a <a href="https://developers.google.com/maps/documentation/" target="_blank">Google Maps</a> szolgáltatja. Előfordulhat, hogy a felület néhol kitakarja a logóját, ez nem szándékos.</p>
+		<p>Anoním statisztikai adatot gyűjtök az alkalmazás használatáról. Nem kell aggódnod emiatt, <b>nem rögzít semmilyen személyes adatot</b>.</p>
+		<p>Vasárnaponként a kandalló melegében reménykedek, sikerült jobbá tennem a világot.</p>
+		<p>Twitter: <a href="http://twitter.com/kisPocok" target="_blank">@kisPocok</a></p>
+		<p>Blog: <a href="http://kispocok.blog.hu?ref=trafik" target="_blank">kispocok.blog.hu</a></p>
+		<a href="#" class="btn btn-large btn-block btn-success">Bezárás</a>
+	</div>
 </div>
 </body>
 </html>

@@ -573,4 +573,31 @@ var trfk = (function(window, $)
  * - All hands brace for warp jump on my mark!
  * - Mark!
  */
-$(trfk.getInstance().init());
+$(function() {
+	if (("standalone" in window.navigator) && !window.navigator.standalone) {
+		// telepített alkalmazás, indítás
+		$('#install').remove();
+		trfk.getInstance().init()
+	} else {
+		if (navigator.userAgent.match(/like Mac OS X/i)) {
+			// telepítés, mert iOS eszköz
+			$('#run').remove();
+			addToHome.show();
+		} else {
+			// minden más, gomb után mehet a menet!
+			$('#run').click(function() {
+				$('#install').remove();
+				$('#map-canvas, #destination, #settings-layout, #legal').show();
+				trfk.getInstance().init();
+			});
+		}
+	}
+});
+
+/**
+ * Config for add2home.js
+ * @type {{message: string}}
+ */
+var addToHomeConfig = {
+	message: 'Add a kezdőlapodhoz! Trafik kereső alkalmazást az `%icon` ikon megnyomásával telepítheted <strong>%device</strong> készülékedre.'
+};
