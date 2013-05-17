@@ -27,5 +27,5 @@ js/app.js
 http://maps.googleapis.com/maps/api/js?key=AIzaSyBTYqceLuszLWf1_yF9CExEitMtvkZQIzE&sensor=true&language=hu&libraries=geometry
 
 NETWORK:
-js/data.php
+data.php
 *
