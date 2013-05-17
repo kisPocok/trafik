@@ -20,7 +20,7 @@ $url         = "http://" . $_SERVER['HTTP_HOST'];
 	<meta property="og:site_name" content="<?=$appTitle; ?>" />
 	<meta property="og:image" content="<?=$url; ?>/images/welcome-1100x990.png" />
 
-	<link rel="shortcut icon" href="<?=$url; ?>/images/favicon.png" />
+	<link rel="shortcut icon" href="images/favicon.png" />
 	<link rel="apple-touch-icon" href="apple-touch-icon-57x57-precomposed.png" />
 	<link rel="apple-touch-icon" sizes="72x72" href="apple-touch-icon-72x72-precomposed.png" />
 	<link rel="apple-touch-icon" sizes="114x114" href="apple-touch-icon-114x114-precomposed.png" />
