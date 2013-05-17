@@ -34,12 +34,7 @@ $url         = "http://" . $_SERVER['HTTP_HOST'];
 
 	<script>
 		var addToHomeConfig = {
-			animationIn:  'bubble',
-			animationOut: 'drop',
-			lifespan:     10000,
-			expire:       2,
-			touchIcon:    true,
-			message:      'Add a kezdőlapodhoz! Trafik kereső alkalmazást az `%icon` ikon megnyomásával telepítheted <strong>%device</strong> készülékedre.'
+			message: 'Add a kezdőlapodhoz! Trafik kereső alkalmazást az `%icon` ikon megnyomásával telepítheted <strong>%device</strong> készülékedre.'
 		};
 	</script>
 	<script src="js/add2home.js"></script>
