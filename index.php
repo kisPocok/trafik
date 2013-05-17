@@ -28,8 +28,21 @@ $url         = "http://" . $_SERVER['HTTP_HOST'];
 	<link rel="canonical" href="<?=$url; ?>" />
 
 	<link href="css/bootstrap.min.css" rel="stylesheet">
+	<link href="css/add2home.css" rel="stylesheet">
 	<link href="css/flat-ui.css" rel="stylesheet">
 	<link href="css/app.css" rel="stylesheet">
+
+	<script>
+		var addToHomeConfig = {
+			animationIn:  'bubble',
+			animationOut: 'drop',
+			lifespan:     10000,
+			expire:       2,
+			touchIcon:    true,
+			message:      'Add a kezdőlapodhoz! Trafik kereső alkalmazást az `%icon` ikon megnyomásával telepítheted <strong>%device</strong> készülékedre.'
+		};
+	</script>
+	<script src="js/add2home.js"></script>
 </head>
 <body id="welcome">
 <div class="container">
