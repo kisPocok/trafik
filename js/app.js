@@ -577,6 +577,7 @@ $(function() {
 	if (("standalone" in window.navigator) && !window.navigator.standalone) {
 		// telepített alkalmazás, indítás
 		$('#install').remove();
+		$('#map-canvas, #destination, #settings-layout, #legal').show();
 		trfk.getInstance().init()
 	} else {
 		if (navigator.userAgent.match(/like Mac OS X/i)) {
