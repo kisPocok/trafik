@@ -496,20 +496,17 @@ var trfk = (function(window, $)
 		var checkSoftwareUpdate = function()
 		{
 			var def = Q.defer();
-			window.addEventListener('load', function(e)
+			window.applicationCache.addEventListener('updateready', function(e)
 			{
-				window.applicationCache.addEventListener('updateready', function(e)
-				{
-					if (window.applicationCache.status == window.applicationCache.UPDATEREADY) {
-						window.applicationCache.swapCache();
-						if (confirm('Új Trafik frissítések elérhetőek. Újraindúlhat a programot most?')) {
-							def.reject();
-							window.location.reload();
-						}
+				if (window.applicationCache.status == window.applicationCache.UPDATEREADY) {
+					window.applicationCache.swapCache();
+					if (confirm('Új Trafik frissítések elérhetőek. Újraindúlhat a programot most?')) {
+						def.reject();
+						window.location.reload();
 					}
-				}, false);
-				def.resolve();
+				}
 			}, false);
+			def.resolve();
 			return def.promise;
 		};
 
@@ -576,4 +573,4 @@ var trfk = (function(window, $)
  * - All hands brace for warp jump on my mark!
  * - Mark!
  */
-$(trfk.getInstance().init);
+$(trfk.getInstance().init());
