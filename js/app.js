@@ -574,11 +574,17 @@ var trfk = (function(window, $)
  * - Mark!
  */
 $(function() {
-	if (("standalone" in window.navigator) && !window.navigator.standalone) {
-		// telepített alkalmazás, indítás
+
+	var start = function()
+	{
 		$('#install').remove();
 		$('#map-canvas, #destination, #settings-layout, #legal').show();
 		trfk.getInstance().init()
+	};
+
+	if (("standalone" in window.navigator) && !window.navigator.standalone) {
+		// telepített alkalmazás, indítás
+		start();
 	} else {
 		if (navigator.userAgent.match(/like Mac OS X/i)) {
 			// telepítés, mert iOS eszköz
@@ -586,11 +592,7 @@ $(function() {
 			addToHome.show();
 		} else {
 			// minden más, gomb után mehet a menet!
-			$('#run').click(function() {
-				$('#install').remove();
-				$('#map-canvas, #destination, #settings-layout, #legal').show();
-				trfk.getInstance().init();
-			});
+			$('#run').click(start);
 		}
 	}
 });
