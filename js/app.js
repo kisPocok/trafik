@@ -37,28 +37,20 @@ var trfk = (function(window, $)
 		var directionsService = new google.maps.DirectionsService();
 		var geocoder          = new google.maps.Geocoder();
 
-
 		/**
 		 * Running application by device
 		 */
 		var initByDevice = function()
 		{
-			var start = function()
-			{
-				$('#install').remove();
-				$('#map-canvas, #destination, #settings, #legal').show();
-				initializeApp();
-			};
-
 			if (browser.isStandaloneApp()) {
 				// telepített alkalmazás, indítás
-				start();
+				initializeApp();
 			} else if (browser.isMobileSafari()) {
 				$('#run').remove();
 				addToHome.show();
 			} else {
 				// minden más, gomb után mehet a menet!
-				$('#run').click(start);
+				$('#run').click(initializeApp);
 			}
 		};
 
@@ -67,6 +59,9 @@ var trfk = (function(window, $)
 		 */
 		var initializeApp = function()
 		{
+			$('#install').remove();
+			$('#map-canvas, #destination, #settings, #legal').show();
+
 			Q.fcall(checkSoftwareUpdate)
 				.then(user.getLocation)
 				.then(function(userPos)
@@ -199,6 +194,14 @@ var trfk = (function(window, $)
 		/**
 		 * @param key
 		 */
+		storage.getInt = function(key)
+		{
+			return storage.get(key) * 1;
+		}
+
+		/**
+		 * @param key
+		 */
 		storage.delete = function(key)
 		{
 			return window.localStorage.removeItem(key);
@@ -258,7 +261,7 @@ var trfk = (function(window, $)
 			if (!window.localStorage.hasOwnProperty('user-last-location-expire')) {
 				return false;
 			}
-			var expiration = storage.get('user-last-location-expire') * 1;
+			var expiration = storage.getInt('user-last-location-expire');
 			if (getTime() > expiration) {
 				// cache expired
 				user.clearSavedLocation();
@@ -666,10 +669,10 @@ var trfk = (function(window, $)
 			author:       '@kisPocok',
 			version:      '1.0',
 			init:         initByDevice,
+			initApp:      initializeApp,
 			getLocation:  user.getLocation,
 			showLocation: user.showLocation,
-			showNearest:  navigateUserToNearestPoint,
-			s: storage
+			showNearest:  navigateUserToNearestPoint
 		};
 	}
 
@@ -690,6 +693,7 @@ var trfk = (function(window, $)
  * - All batteries concentrate forward firepower.
  * - Spin up drives two and six!
  * - All hands brace for warp jump on my mark!
+ * - [..]
  * - Mark!
  */
 $(function() {
@@ -701,5 +705,6 @@ $(function() {
  * @type {{message: string}}
  */
 var addToHomeConfig = {
-	message: 'Add a kezdőlapodhoz! Trafik kereső alkalmazást az `%icon` ikon megnyomásával telepítheted <strong>%device</strong> készülékedre.'
+	message: 'Add a kezdőlapodhoz! Trafik kereső alkalmazást a(z) `%icon` ikon megnyomásával telepítheted <strong>%device</strong> készülékedre.',
+	lifespan: 200000
 };
