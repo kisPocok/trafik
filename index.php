@@ -36,7 +36,7 @@ $url         = "http://" . $_SERVER['HTTP_HOST'];
 	<link rel="stylesheet" href="css/bootstrap.min.css">
 	<link rel="stylesheet" href="css/add2home.css">
 	<link rel="stylesheet" href="css/flat-ui.css">
-	<link rel="stylesheet" href="css/app.css">
+	<link rel="stylesheet" href="css/app.css?v=1">
 
 	<script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyBTYqceLuszLWf1_yF9CExEitMtvkZQIzE&sensor=true&language=hu&libraries=geometry"></script>
 	<script src="js/google.maps.marker-cluster.js"></script>
@@ -73,12 +73,12 @@ $url         = "http://" . $_SERVER['HTTP_HOST'];
 	<div class="bottom-line">
 		<span class="fui-location-16"></span>
 		<span class="fui-time-16"></span>
-		<a href="#" class="settings fui-menu-16">Beállítások</a>
+		<a href="#" class="settings fui-gear-16">Beállítások</a>
 	</div>
 </div>
 
 <!-- Settings page -->
-<div id="settings-layout" class="layout hidden" style="display:none;">
+<div id="settings" class="page hidden" style="display:none;">
 	<div>
 		<h2>Útvonaltervezés módja</h2>
 		<label class="radio">
@@ -96,7 +96,7 @@ $url         = "http://" . $_SERVER['HTTP_HOST'];
 </div>
 
 <!-- Term of Use page -->
-<div id="legal" class="layout hidden" style="display:none;">
+<div id="legal" class="page hidden" style="display:none;">
 	<div>
 		<h2>Felhasználási feltételek</h2>
 		<p>Szeretném, hogy tudd, mert fontos. A térképet a <a href="https://developers.google.com/maps/documentation/" target="_blank">Google Maps</a> szolgáltatja. Előfordulhat, hogy a felület néhol kitakarja a logóját, ez nem szándékos.</p>

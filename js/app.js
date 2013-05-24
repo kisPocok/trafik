@@ -37,6 +37,68 @@ var trfk = (function(window, $)
 		var directionsService = new google.maps.DirectionsService();
 		var geocoder          = new google.maps.Geocoder();
 
+
+		/**
+		 * Running application by device
+		 */
+		var initByDevice = function()
+		{
+			var start = function()
+			{
+				$('#install').remove();
+				$('#map-canvas, #destination, #settings, #legal').show();
+				initializeApp();
+			};
+
+			if (browser.isStandaloneApp()) {
+				// telepített alkalmazás, indítás
+				start();
+			} else if (browser.isMobileSafari()) {
+				$('#run').remove();
+				addToHome.show();
+			} else {
+				// minden más, gomb után mehet a menet!
+				$('#run').click(start);
+			}
+		};
+
+		/**
+		 * Standard app start
+		 */
+		var initializeApp = function()
+		{
+			Q.fcall(checkSoftwareUpdate)
+				.then(user.getLocation)
+				.then(function(userPos)
+				{
+					var markerParams  = {
+						maxZoom:  14,
+						gridSize: 45
+					};
+
+					if (browser.isAndroid()) {
+						initAndroid();
+					}
+
+					map           = initializeMap();
+					streetView    = initializeStreetView(map);
+					markers       = getLocationMarkers();
+					markerCluster = new MarkerClusterer(map, markers, markerParams);
+
+					/* TODO handle hiding markers because layout hangs on map
+					 google.maps.event.addListener(directionsDisplay, 'directions_changed', function() {
+					 console.log('directions_changed TODO')
+					 });
+					 */
+
+					activateUI();
+					$(document).bind('touchmove', false); // disable scrolling
+				})
+				.then(navigateUserToNearestPoint)
+				.fail(defaultErrorHandler)
+				.done();
+		};
+
 		/**
 		 * @returns {google.maps.Map}
 		 */
@@ -44,7 +106,7 @@ var trfk = (function(window, $)
 		{
 			var container = document.getElementById("map-canvas");
 			var params = {
-				center:    loadUserLastLocation()||getDefaultLocation(),
+				center:    user.loadLastLocation()||getDefaultLocation(),
 				zoom:      16,
 				mapTypeId: google.maps.MapTypeId.ROADMAP,
 				streetViewControl: true
@@ -66,11 +128,50 @@ var trfk = (function(window, $)
 			return panorama;
 		};
 
-		var initForAndroid = function()
+		/**
+		 * Init Android specific resources
+		 *
+		 * @returns {boolean}
+		 */
+		var initAndroid = function()
 		{
-			if(navigator.userAgent.match(/Android/i)){
-				window.scrollTo(0,1);
-			}
+			window.scrollTo(0,1);
+			//$('body').addClass('device-android');
+		};
+
+		/**
+		 * Browser specific methods
+		 */
+		var browser = {};
+
+		/**
+		 * Is this app installed on the device?
+		 *
+		 * @returns {boolean}
+		 */
+		browser.isStandaloneApp = function()
+		{
+			return ("standalone" in window.navigator) && window.navigator.standalone;
+		};
+
+		/**
+		 * Is this browser Mobile Safari?
+		 *
+		 * @returns {boolean}
+		 */
+		browser.isMobileSafari = function()
+		{
+			return navigator.userAgent.match(/(iPod|iPhone|iPad)/) && navigator.userAgent.match(/AppleWebKit/)
+		};
+
+		/**
+		 * App running on Android?
+		 *
+		 * @returns {boolean}
+		 */
+		browser.isAndroid = function()
+		{
+			return navigator.userAgent.match(/Android/i);
 		};
 
 		/**
@@ -82,12 +183,17 @@ var trfk = (function(window, $)
 		};
 
 		/**
+		 * User's properties
+		 */
+		var user = {};
+
+		/**
 		 * @returns {Q.defer().promise}
 		 */
-		var getUserLocation = function()
+		user.getLocation = function()
 		{
 			var def = Q.defer();
-			var lastPos = loadUserLastLocation();
+			var lastPos = user.loadLastLocation();
 			if (lastPos) {
 				def.resolve(lastPos);
 				return def.promise;
@@ -96,7 +202,7 @@ var trfk = (function(window, $)
 			if(navigator.geolocation) {
 				navigator.geolocation.getCurrentPosition(function(position) {
 					var pos = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-					saveUserLastLocation(pos);
+					user.saveLocation(pos, 60000);
 					def.resolve(pos);
 				}, function() {
 					def.reject(new Error('Kérlek, engedélyezd a helyzeted megosztását!'));
@@ -113,7 +219,7 @@ var trfk = (function(window, $)
 		 * @param pos {google.maps.LatLng}
 		 * @param expire {number}
 		 */
-		var saveUserLastLocation = function(pos, expire)
+		user.saveLocation = function(pos, expire)
 		{
 			if (!expire) {
 				var expire = 60000; // 1 minute
@@ -126,7 +232,7 @@ var trfk = (function(window, $)
 		/**
 		 * @returns {*}
 		 */
-		var loadUserLastLocation = function()
+		user.loadLastLocation = function()
 		{
 			if (!window.localStorage.hasOwnProperty('user-last-location-expire')) {
 				return false;
@@ -211,7 +317,7 @@ var trfk = (function(window, $)
 				google.maps.event.addListener(marker, 'click', function()
 				{
 					Q.all([
-						getUserLocation(),
+						user.getLocation(),
 						marker.getPosition()
 					])
 						.spread(navigateUserToDestination)
@@ -404,7 +510,7 @@ var trfk = (function(window, $)
 			$('.settings').click(function(event)
 			{
 				event.stopPropagation();
-				$('#destination, #settings-layout').toggleClass('hidden');
+				$('#destination, #settings').toggleClass('hidden');
 				return false;
 			});
 
@@ -426,7 +532,7 @@ var trfk = (function(window, $)
 					var element = $(event.target);
 					if (element.hasClass('radio')) {
 						$('#destination').removeClass('hidden');
-						$('#settings-layout').addClass('hidden');
+						$('#settings').addClass('hidden');
 					} else if (element.is('input')) {
 						setTransportMode(element.attr('value'));
 						navigateUserToNearestPoint();
@@ -443,7 +549,7 @@ var trfk = (function(window, $)
 		 */
 		var showUserLocation = function()
 		{
-			Q.fcall(getUserLocation)
+			Q.fcall(user.getLocation)
 				.then(function(pos)
 				{
 					map.setCenter(pos);
@@ -457,7 +563,7 @@ var trfk = (function(window, $)
 		 */
 		var navigateUserToNearestPoint =  function()
 		{
-			Q.fcall(getUserLocation)
+			Q.fcall(user.getLocation)
 				.then(function(userLocation) {
 					var marker = getNearestPoint(userLocation, markers);
 					return [
@@ -510,45 +616,14 @@ var trfk = (function(window, $)
 			return def.promise;
 		};
 
-		var constructor = function()
-		{
-			Q.fcall(checkSoftwareUpdate)
-				.then(getUserLocation)
-				.then(function(userPos)
-				{
-					var markerParams  = {
-						maxZoom:  14,
-						gridSize: 45
-					};
-
-					initForAndroid();
-					map           = initializeMap();
-					streetView    = initializeStreetView(map);
-					markers       = getLocationMarkers();
-					markerCluster = new MarkerClusterer(map, markers, markerParams);
-
-					/* TODO handle hiding markers because layout hangs on map
-					google.maps.event.addListener(directionsDisplay, 'directions_changed', function() {
-						console.log('directions_changed TODO')
-					});
-					*/
-
-					activateUI();
-					$(document).bind('touchmove', false); // disable scrolling
-				})
-				.then(navigateUserToNearestPoint)
-				.fail(defaultErrorHandler)
-				.done();
-		};
-
 		/**
 		 * Public methods and vars
 		 */
 		return {
 			author:       '@kisPocok',
 			version:      '1.0',
-			init:         constructor,
-			getLocation:  getUserLocation,
+			init:         initByDevice,
+			getLocation:  user.getLocation,
 			showLocation: showUserLocation,
 			showNearest:  navigateUserToNearestPoint
 		};
@@ -574,27 +649,7 @@ var trfk = (function(window, $)
  * - Mark!
  */
 $(function() {
-
-	var start = function()
-	{
-		$('#install').remove();
-		$('#map-canvas, #destination, #settings-layout, #legal').show();
-		trfk.getInstance().init()
-	};
-
-	if (("standalone" in window.navigator) && window.navigator.standalone) {
-		// telepített alkalmazás, indítás
-		start();
-	} else {
-		if (navigator.userAgent.match(/like Mac OS X/i)) {
-			// telepítés, mert iOS eszköz
-			$('#run').remove();
-			addToHome.show();
-		} else {
-			// minden más, gomb után mehet a menet!
-			$('#run').click(start);
-		}
-	}
+	trfk.getInstance().init()
 });
 
 /**
