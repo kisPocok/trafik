@@ -82,7 +82,7 @@ var trfk = (function(window, $)
 
 					map           = initializeMap();
 					streetView    = initializeStreetView(map);
-					markers       = getLocationMarkers();
+					markers       = getLocationMarkers(locationDataList, marker.selfNavigationClick);
 					markerCluster = new MarkerClusterer(map, markers, markerParams);
 
 					/* TODO handle hiding markers because layout hangs on map
@@ -175,12 +175,34 @@ var trfk = (function(window, $)
 		};
 
 		/**
-		 * @returns {google.maps.LatLng}
+		 * User's properties
 		 */
-		var getDefaultLocation = function()
+		var storage = {};
+
+		/**
+		 * @param key
+		 * @param value
+		 */
+		storage.set = function(key, value)
 		{
-			return new google.maps.LatLng(47.497912, 19.040235);
-		};
+			window.localStorage.setItem(key, value);
+		}
+
+		/**
+		 * @param key
+		 */
+		storage.get = function(key)
+		{
+			window.localStorage.getItem(key);
+		}
+
+		/**
+		 * @param key
+		 */
+		storage.delete = function(key)
+		{
+			window.localStorage.removeItem(key);
+		}
 
 		/**
 		 * User's properties
@@ -224,9 +246,9 @@ var trfk = (function(window, $)
 			if (!expire) {
 				var expire = 60000; // 1 minute
 			}
-			window.localStorage.setItem('user-last-location-expire', getTime() + expire);
-			window.localStorage.setItem('user-last-location-lat', pos.lat());
-			window.localStorage.setItem('user-last-location-lng', pos.lng());
+			storage.set('user-last-location-expire', getTime() + expire);
+			storage.set('user-last-location-lat', pos.lat());
+			storage.set('user-last-location-lng', pos.lng());
 		};
 
 		/**
@@ -237,24 +259,46 @@ var trfk = (function(window, $)
 			if (!window.localStorage.hasOwnProperty('user-last-location-expire')) {
 				return false;
 			}
-			var expiration = window.localStorage.getItem('user-last-location-expire') * 1;
+			var expiration = storage.get('user-last-location-expire') * 1;
 			if (getTime() > expiration) {
 				// cache expired
-				clearUserLastLocation();
+				user.clearSavedLocation();
 				return false;
 			}
 
 			return new google.maps.LatLng(
-				window.localStorage.getItem('user-last-location-lat'),
-				window.localStorage.getItem('user-last-location-lng')
+				storage.get('user-last-location-lat'),
+				storage.get('user-last-location-lng')
 			);
 		};
 
-		var clearUserLastLocation = function()
+		user.clearSavedLocation = function()
 		{
-			window.localStorage.removeItem('user-last-location-expire');
-			window.localStorage.removeItem('user-last-location-lat');
-			window.localStorage.removeItem('user-last-location-lng');
+			storage.delete('user-last-location-expire');
+			storage.delete('user-last-location-lat');
+			storage.delete('user-last-location-lng');
+		};
+
+		/**
+		 * public command
+		 */
+		user.showLocation = function()
+		{
+			Q.fcall(user.getLocation)
+				.then(function(pos)
+				{
+					map.setCenter(pos);
+				})
+				.fail(defaultErrorHandler)
+				.done();
+		};
+
+		/**
+		 * @returns {google.maps.LatLng}
+		 */
+		var getDefaultLocation = function()
+		{
+			return new google.maps.LatLng(47.497912, 19.040235);
 		};
 
 		/**
@@ -262,7 +306,7 @@ var trfk = (function(window, $)
 		 * @param destinationPos {google.maps.LatLng}
 		 * @return {Q.defer().promise} {google.maps.GeocoderResponse}
 		 */
-		var navigateUserToDestination = function(userPos, destinationPos)
+		var navigateFromAToB = function(userPos, destinationPos)
 		{
 			var def = Q.defer();
 			var request = {
@@ -284,13 +328,15 @@ var trfk = (function(window, $)
 			return def.promise;
 		};
 
+		var marker = {};
+
 		/**
 		 * @param pos {google.maps.LatLng}
 		 * @param icon {object}
 		 * @param title {string}
 		 * @returns {google.maps.Marker}
 		 */
-		var createMarker = function(pos, icon, title)
+		marker.create = function(pos, icon, title)
 		{
 			return new google.maps.Marker({
 				position: pos,
@@ -299,33 +345,48 @@ var trfk = (function(window, $)
 			});
 		};
 
-		/**
-		 * @returns {Array}
-		 */
-		var getLocationMarkers = function()
+		marker.appIcon = function()
 		{
-			var markers = [];
-			var icon = new google.maps.MarkerImage(
+			return new google.maps.MarkerImage(
 				'images/trafik-24x24.png',
 				new google.maps.Size(24, 24), // (width,height)
 				new google.maps.Point(0, 0),  // The origin point (x,y)
 				new google.maps.Point(12, 24) // The anchor point (x,y)
 			);
-			$(locationDataList).each(function(i, data) {
+		};
+
+		/**
+		 * @param markerItem {google.maps.Marker}
+		 */
+		marker.selfNavigationClick = function(markerItem)
+		{
+			Q.all([
+					user.getLocation(),
+					markerItem.getPosition()
+				])
+				.spread(navigateFromAToB)
+				.then(transformNavigationResponse)
+				.then(populateDestionationView)
+				.done();
+		}
+
+		/**
+		 * @param locationList    {Array}
+		 * @param onClickCallback {function}
+		 * @returns {Array}
+		 */
+		var getLocationMarkers = function(locationList, onClickCallback)
+		{
+			var markers = [];
+			var icon = marker.appIcon();
+			$(locationList).each(function(i, data) {
 				var pos = new google.maps.LatLng(data[1], data[0]);
-				var marker = createMarker(pos, icon, 'Trafik ' + i);
-				google.maps.event.addListener(marker, 'click', function()
+				var markerItem = marker.create(pos, icon, 'Trafik ' + i); // TODO fix item name!
+				google.maps.event.addListener(markerItem, 'click', function()
 				{
-					Q.all([
-						user.getLocation(),
-						marker.getPosition()
-					])
-						.spread(navigateUserToDestination)
-						.then(transformNavigationResponse)
-						.then(populateDestionationLayout)
-						.done();
+					return onClickCallback(markerItem);
 				});
-				markers.push(marker);
+				markers.push(markerItem);
 			});
 			return markers;
 		};
@@ -392,7 +453,7 @@ var trfk = (function(window, $)
 		/**
 		 * @param data {object}
 		 */
-		var populateDestionationLayout = function(data)
+		var populateDestionationView = function(data)
 		{
 			var des  = $('#destination');
 			var divs = des.find('.bottom-line > *');
@@ -473,7 +534,7 @@ var trfk = (function(window, $)
 		 */
 		var setTransportMode = function(mode)
 		{
-			window.localStorage.setItem('user-transport-mode', mode);
+			storage.set('user-transport-mode', mode);
 			transportMode = mode;
 		};
 
@@ -483,7 +544,7 @@ var trfk = (function(window, $)
 		var getTransportMode = function()
 		{
 			if (window.localStorage.hasOwnProperty('user-transport-mode')) {
-				return window.localStorage.getItem('user-transport-mode');
+				return storage.get('user-transport-mode');
 			}
 			return google.maps.TravelMode.WALKING;
 		};
@@ -547,20 +608,6 @@ var trfk = (function(window, $)
 		/**
 		 * public command
 		 */
-		var showUserLocation = function()
-		{
-			Q.fcall(user.getLocation)
-				.then(function(pos)
-				{
-					map.setCenter(pos);
-				})
-				.fail(defaultErrorHandler)
-				.done();
-		};
-
-		/**
-		 * public command
-		 */
 		var navigateUserToNearestPoint =  function()
 		{
 			Q.fcall(user.getLocation)
@@ -571,9 +618,9 @@ var trfk = (function(window, $)
 						marker.getPosition()
 					];
 				})
-				.spread(navigateUserToDestination)
+				.spread(navigateFromAToB)
 				.then(transformNavigationResponse)
-				.then(populateDestionationLayout)
+				.then(populateDestionationView)
 				.fail(defaultErrorHandler)
 				.done();
 		};
@@ -624,7 +671,7 @@ var trfk = (function(window, $)
 			version:      '1.0',
 			init:         initByDevice,
 			getLocation:  user.getLocation,
-			showLocation: showUserLocation,
+			showLocation: user.showLocation,
 			showNearest:  navigateUserToNearestPoint
 		};
 	}
