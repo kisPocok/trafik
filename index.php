@@ -36,7 +36,7 @@ $url         = "http://" . $_SERVER['HTTP_HOST'];
 	<link rel="stylesheet" href="css/bootstrap.min.css">
 	<link rel="stylesheet" href="css/add2home.css">
 	<link rel="stylesheet" href="css/flat-ui.css">
-	<link rel="stylesheet" href="css/app.css?v=1">
+	<link rel="stylesheet" href="css/app.css">
 
 	<script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyBTYqceLuszLWf1_yF9CExEitMtvkZQIzE&sensor=true&language=hu&libraries=geometry"></script>
 	<script src="js/google.maps.marker-cluster.js"></script>
@@ -73,7 +73,7 @@ $url         = "http://" . $_SERVER['HTTP_HOST'];
 	<div class="bottom-line">
 		<span class="fui-location-16"></span>
 		<span class="fui-time-16"></span>
-		<a href="#" class="settings fui-gear-16">Beállítások</a>
+		<a href="#" class="settings fui-menu-16">Beállítások</a>
 	</div>
 </div>
 
