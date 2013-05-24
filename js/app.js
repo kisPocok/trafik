@@ -185,7 +185,7 @@ var trfk = (function(window, $)
 		 */
 		storage.set = function(key, value)
 		{
-			window.localStorage.setItem(key, value);
+			return window.localStorage.setItem(key, value);
 		}
 
 		/**
@@ -193,7 +193,7 @@ var trfk = (function(window, $)
 		 */
 		storage.get = function(key)
 		{
-			window.localStorage.getItem(key);
+			return window.localStorage.getItem(key);
 		}
 
 		/**
@@ -201,7 +201,7 @@ var trfk = (function(window, $)
 		 */
 		storage.delete = function(key)
 		{
-			window.localStorage.removeItem(key);
+			return window.localStorage.removeItem(key);
 		}
 
 		/**
@@ -220,9 +220,8 @@ var trfk = (function(window, $)
 				def.resolve(lastPos);
 				return def.promise;
 			}
-
-			if(navigator.geolocation) {
-				navigator.geolocation.getCurrentPosition(function(position) {
+			if(window.navigator.geolocation) {
+				window.navigator.geolocation.getCurrentPosition(function(position) {
 					var pos = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
 					user.saveLocation(pos, 60000);
 					def.resolve(pos);
@@ -611,12 +610,9 @@ var trfk = (function(window, $)
 		var navigateUserToNearestPoint =  function()
 		{
 			Q.fcall(user.getLocation)
-				.then(function(userLocation) {
-					var marker = getNearestPoint(userLocation, markers);
-					return [
-						userLocation,
-						marker.getPosition()
-					];
+				.then(function(pos) {
+					var marker = getNearestPoint(pos, markers);
+					return [pos, marker.getPosition()];
 				})
 				.spread(navigateFromAToB)
 				.then(transformNavigationResponse)
@@ -635,12 +631,12 @@ var trfk = (function(window, $)
 		{
 			var nearest = false;
 			var min = 10000000;
-			$(markers).each(function(i, marker)
+			$(markers).each(function(i, markerItem)
 			{
-				var distance = google.maps.geometry.spherical.computeDistanceBetween(pos, marker.getPosition());
+				var distance = google.maps.geometry.spherical.computeDistanceBetween(pos, markerItem.getPosition());
 				min = Math.min(distance, min);
 				if (min == distance) {
-					nearest = marker;
+					nearest = markerItem;
 				}
 			});
 			return nearest;
@@ -672,7 +668,8 @@ var trfk = (function(window, $)
 			init:         initByDevice,
 			getLocation:  user.getLocation,
 			showLocation: user.showLocation,
-			showNearest:  navigateUserToNearestPoint
+			showNearest:  navigateUserToNearestPoint,
+			s: storage
 		};
 	}
 
