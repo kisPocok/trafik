@@ -54,38 +54,6 @@ var trfk = (function(window, $)
 			}
 		};
 
-		var getLocationData = function()
-		{
-			var data = getCachedLocationData();
-			if (!data) {
-				data = loadLocationData();
-			}
-			return data;
-		};
-
-		var getCachedLocationData = function()
-		{
-			return false;
-		};
-
-		var loadLocationData = function()
-		{
-			var def = Q.defer();
-			var params = {
-				method:   'post',
-				dataType: 'json'
-			};
-			$.ajax('data.php', params)
-				.done(function(response) {
-					def.resolve(response);
-				})
-				.fail(function(e) {
-					console.log('response error', e);
-					def.reject(e);
-				});
-			return def.promise;
-		};
-
 		/**
 		 * Standard app start
 		 */
@@ -96,13 +64,17 @@ var trfk = (function(window, $)
 
 			Q.fcall(checkSoftwareUpdate)
 				.then(user.getLocation)
-				.then(getLocationData)
+				.then(locationData.get)
 				.then(function(locations)
 				{
 					var markerParams  = {
 						maxZoom:  14,
 						gridSize: 45
 					};
+
+					if (!locations || locations.length < 1) {
+						console.error('Hiba történt! Nem elérhető a boltok listája. Próbáld meg újra.');
+					}
 
 					if (browser.isAndroid()) {
 						initAndroid();
@@ -251,22 +223,29 @@ var trfk = (function(window, $)
 		user.getLocation = function()
 		{
 			var def = Q.defer();
+			var params = {
+				// see more details at http://diveintohtml5.info/geolocation.html
+				timeout:    10000,
+				maximumAge: 75000,
+				enableHighAccuracy: false
+			};
 			var lastPos = user.loadLastLocation();
 			if (lastPos) {
 				def.resolve(lastPos);
 				return def.promise;
 			}
 			if(window.navigator.geolocation) {
-				window.navigator.geolocation.getCurrentPosition(function(position) {
+				window.navigator.geolocation.getCurrentPosition(function(position)
+				{
 					var pos = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
 					user.saveLocation(pos, 60000);
 					def.resolve(pos);
-				}, function() {
+				}, function()
+				{
 					def.reject(new Error('Kérlek, engedélyezd a helyzeted megosztását!'));
-				});
+				}, params);
 			} else {
 				// Browser doesn't support Geolocation
-				//throw "UnsupportedBrowserException";
 				def.reject(new Error('Nem támogatott böngésző!'));
 			}
 			return def.promise;
@@ -405,7 +384,103 @@ var trfk = (function(window, $)
 				.then(transformNavigationResponse)
 				.then(populateDestionationView)
 				.done();
-		}
+		};
+
+		/**
+		 * Location data = Interesting points on map
+		 */
+		var locationData = {};
+
+		/**
+		 * @returns {Q.defer().promise}
+		 */
+		locationData.get = function()
+		{
+			var def = Q.defer();
+			var data = false;
+			var cacheExpired = locationData.isCacheExpired();
+			if (cacheExpired) {
+				// cache expired, try to reload live data
+				locationData.load()
+					.then(function(data)
+					{
+						// data loaded from ajax
+						if (!data) {
+							// oops, somethings wrong with data, try from cache (even if expired)
+							data = locationData.getFromCache();
+							def.resolve(data);
+						}
+						def.resolve(data);
+					})
+					.fail(function()
+					{
+						// unable to load live data, try from cache (even if expired)
+						data = locationData.getFromCache();
+						def.resolve(data);
+					});
+			} else {
+				// cache is OK
+				data = locationData.getFromCache();
+				def.resolve(data);
+			}
+
+			return def.promise;
+		};
+
+		/**
+		 * @param data {Array}
+		 * @returns {Array}
+		 */
+		locationData.save = function(data)
+		{
+			var expire = 3600000; // 1 hour
+			storage.set('location-data', JSON.stringify(data));
+			storage.set('location-data-expire', getTime() + expire);
+			return data;
+		};
+
+		/**
+		 * @returns {boolean}
+		 */
+		locationData.isCacheExpired = function()
+		{
+			var expiration = storage.getInt('location-data-expire');
+			return (getTime() > expiration);
+		};
+
+		/**
+		 * @returns {Array}
+		 */
+		locationData.getFromCache = function()
+		{
+			var data = storage.get('location-data');
+			return JSON.parse(data);
+		};
+
+		/**
+		 * @returns {Q.defer().promise}
+		 */
+		locationData.load = function()
+		{
+			var def = Q.defer();
+			var params = {
+				method:   'post',
+				dataType: 'json'
+			};
+			$.ajax('data.php', params)
+				.done(function(response) {
+					if (!response.length) {
+						def.reject();
+						return;
+					}
+					locationData.save(response);
+					def.resolve(response);
+				})
+				.fail(function(e) {
+					def.reject(e);
+				});
+			return def.promise;
+		};
 
 		/**
 		 * @param locationList    {Array}
@@ -677,6 +752,9 @@ var trfk = (function(window, $)
 		 */
 		var getNearestPoint = function(pos, markers)
 		{
+			if (markers.length < 1) {
+				return null;
+			}
 			var nearest = false;
 			var min = 10000000;
 			$(markers).each(function(i, markerItem)

@@ -39,15 +39,6 @@ $autoRun     = isset($_GET['autorun']) && intval($_GET['autorun']) === 1;
 	<link rel="stylesheet" href="css/add2home.css">
 	<link rel="stylesheet" href="css/flat-ui.css">
 	<link rel="stylesheet" href="css/app.css">
-
-	<script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyBTYqceLuszLWf1_yF9CExEitMtvkZQIzE&sensor=true&language=hu&libraries=geometry"></script>
-	<script src="js/google.maps.marker-cluster.js"></script>
-	<script src="js/jquery-1.9.1.min.js"></script>
-	<script src="js/q.min.js"></script>
-	<script src="js/flat-ui.inputs.js"></script>
-	<script src="js/app.js"></script>
-	<script>var addToHomeConfig = { autostart:false, message:'<?=$add2home; ?>'};</script>
-	<script src="js/add2home.js"></script>
 </head>
 <body>
 
@@ -108,6 +99,15 @@ $autoRun     = isset($_GET['autorun']) && intval($_GET['autorun']) === 1;
 		<a href="#" class="btn btn-large btn-block btn-success">Bezárás</a>
 	</div>
 </div>
+
+<script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyBTYqceLuszLWf1_yF9CExEitMtvkZQIzE&sensor=true&language=hu&libraries=geometry"></script>
+<script src="js/google.maps.marker-cluster.js"></script>
+<script src="js/jquery-1.9.1.min.js"></script>
+<script src="js/q.min.js"></script>
+<script src="js/flat-ui.inputs.js"></script>
+<script src="js/app.js"></script>
+<script>var addToHomeConfig = { autostart:false, message:'<?=$add2home; ?>'};</script>
+<script src="js/add2home.js"></script>
 <?php if($autoRun): ?>
 <script>/*AutoRun:ON*/trfk.getInstance().initApp();</script>
 <?php endif; ?>
