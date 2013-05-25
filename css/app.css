@@ -75,6 +75,9 @@ Destination widget
 	display: block;
 	white-space: nowrap;
 }
+#destination h1 .approximate {
+	font-size: 70%;
+}
 #destination > div:first-child {
 	padding: 20px;
 }

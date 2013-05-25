@@ -54,6 +54,38 @@ var trfk = (function(window, $)
 			}
 		};
 
+		var getLocationData = function()
+		{
+			var data = getCachedLocationData();
+			if (!data) {
+				data = loadLocationData();
+			}
+			return data;
+		};
+
+		var getCachedLocationData = function()
+		{
+			return false;
+		};
+
+		var loadLocationData = function()
+		{
+			var def = Q.defer();
+			var params = {
+				method:   'post',
+				dataType: 'json'
+			};
+			$.ajax('data.php', params)
+				.done(function(response) {
+					def.resolve(response);
+				})
+				.fail(function(e) {
+					console.log('response error', e);
+					def.reject(e);
+				});
+			return def.promise;
+		};
+
 		/**
 		 * Standard app start
 		 */
@@ -64,7 +96,8 @@ var trfk = (function(window, $)
 
 			Q.fcall(checkSoftwareUpdate)
 				.then(user.getLocation)
-				.then(function(userPos)
+				.then(getLocationData)
+				.then(function(locations)
 				{
 					var markerParams  = {
 						maxZoom:  14,
@@ -77,14 +110,14 @@ var trfk = (function(window, $)
 
 					map           = initializeMap();
 					streetView    = initializeStreetView(map);
-					markers       = getLocationMarkers(locationDataList, marker.selfNavigationClick);
+					markers       = getLocationMarkers(locations, marker.selfNavigationClick);
 					markerCluster = new MarkerClusterer(map, markers, markerParams);
 
 					/* TODO handle hiding markers because layout hangs on map
-					 google.maps.event.addListener(directionsDisplay, 'directions_changed', function() {
-					 console.log('directions_changed TODO')
-					 });
-					 */
+					google.maps.event.addListener(directionsDisplay, 'directions_changed', function() {
+						console.log('directions_changed TODO')
+					});
+					*/
 
 					activateUI();
 					$(document).bind('touchmove', false); // disable scrolling
@@ -296,6 +329,8 @@ var trfk = (function(window, $)
 		};
 
 		/**
+		 * Center of Budapest
+		 *
 		 * @returns {google.maps.LatLng}
 		 */
 		var getDefaultLocation = function()
@@ -382,8 +417,8 @@ var trfk = (function(window, $)
 			var markers = [];
 			var icon = marker.appIcon();
 			$(locationList).each(function(i, data) {
-				var pos = new google.maps.LatLng(data[1], data[0]);
-				var markerItem = marker.create(pos, icon, 'Trafik ' + i); // TODO fix item name!
+				var pos = new google.maps.LatLng(data.lng, data.lat);
+				var markerItem = marker.create(pos, icon, 'Trafik ' + (i+1)); // TODO fix item name!
 				google.maps.event.addListener(markerItem, 'click', function()
 				{
 					return onClickCallback(markerItem);
@@ -422,7 +457,8 @@ var trfk = (function(window, $)
 				.then(function(locationInfo)
 				{
 					var d = navigationResponse.routes[0].legs[0];
-					var street_number, route, sublocality, locality;
+					var street_number, route, sublocality, locality, bus_station;
+					var approximate = locationInfo[0].geometry.location_type === "APPROXIMATE";
 					$(locationInfo[0].address_components).each(function(i, item) {
 						if ($.inArray('street_number', item.types) > -1) {
 							street_number = item.short_name;
@@ -432,9 +468,18 @@ var trfk = (function(window, $)
 							sublocality = item.short_name;
 						} else if ($.inArray('locality', item.types) > -1) {
 							locality = item.short_name;
+						} else if ($.inArray('bus_station', item.types) > -1) {
+							bus_station = item.short_name;
 						}
 					});
-					var title = route + ' ' + street_number + '.';
+					if (route && street_number) {
+						var title = route + ' ' + street_number + '.';
+					} else {
+						var title = bus_station;
+					}
+					if (approximate) {
+						title += ' <span class="approximate">körül</span>';
+					}
 					var subtitle = locality;
 					if (sublocality) {
 						// TODO és ha nem egy kerületben van!
@@ -469,8 +514,8 @@ var trfk = (function(window, $)
 					var toggle = streetView.getVisible();
 					streetView.setVisible(!toggle);
 				});
-			des.find('h1').text(data.address);
-			des.find('h2').text(data.address2);
+			des.find('h1').html(data.address);
+			des.find('h2').html(data.address2);
 			$(divs.get(0)).text(data.distance);
 			$(divs.get(1)).text(data.duration);
 		};
@@ -524,11 +569,11 @@ var trfk = (function(window, $)
 		/**
 		 * @returns {google.maps.LatLng}
 		 */
-		var getRandomPoint = function()
+		var getRandomPointFromList = function(list)
 		{
-			var random = Math.floor(Math.random()*locationDataList.length);
-			var trafik = locationDataList[random];
-			return new google.maps.LatLng(trafik[1], trafik[0]);
+			var random = Math.floor(Math.random()*list.length);
+			var point  = list[random];
+			return new google.maps.LatLng(point.lng, point.lat);
 		};
 
 		/**
@@ -637,9 +682,11 @@ var trfk = (function(window, $)
 			$(markers).each(function(i, markerItem)
 			{
 				var distance = google.maps.geometry.spherical.computeDistanceBetween(pos, markerItem.getPosition());
-				min = Math.min(distance, min);
-				if (min == distance) {
-					nearest = markerItem;
+				if (!isNaN(distance) && distance > 0) {
+					min = Math.min(distance, min);
+					if (min == distance) {
+						nearest = markerItem;
+					}
 				}
 			});
 			return nearest;

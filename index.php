@@ -45,7 +45,6 @@ $autoRun     = isset($_GET['autorun']) && intval($_GET['autorun']) === 1;
 	<script src="js/jquery-1.9.1.min.js"></script>
 	<script src="js/q.min.js"></script>
 	<script src="js/flat-ui.inputs.js"></script>
-	<script src="data.php"></script>
 	<script src="js/app.js"></script>
 	<script>var addToHomeConfig = { autostart:false, message:'<?=$add2home; ?>'};</script>
 	<script src="js/add2home.js"></script>
