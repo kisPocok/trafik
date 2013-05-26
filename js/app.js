@@ -45,7 +45,7 @@ var trfk = (function(window, $)
 			if (browser.isStandaloneApp()) {
 				// telepített alkalmazás, indítás
 				initializeApp();
-			} else if (browser.isMobileSafari()) {
+			} else if (browser.isMobileSafari() && !browser.isMobileChrome()) {
 				$('#run').remove();
 				addToHome.show();
 			} else {
@@ -155,9 +155,11 @@ var trfk = (function(window, $)
 		{
 			var container = $("#install");
 			container.on("touchmove", false);
-			setTimeout(function() {
-				container.find('h2').text('Add a kezdőlapodhoz!');
-			}, 10000);
+			if (browser.isMobileSafari()) {
+				setTimeout(function() {
+					container.find('h2').text('Add a kezdőlapodhoz!');
+				}, 8000);
+			}
 		};
 
 		/**
@@ -194,6 +196,16 @@ var trfk = (function(window, $)
 		{
 			return browser.isIOS() && navigator.userAgent.match(/AppleWebKit/);
 		};
+
+		/**
+		 * Is this browser Mobile Chrome?
+		 *
+		 * @returns {boolean}
+		 */
+		browser.isMobileChrome = function()
+		{
+			return browser.isMobileSafari() && navigator.userAgent.match('/CriOS/');
+		}
 
 		/**
 		 * App running on Android?
