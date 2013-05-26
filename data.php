@@ -3,12 +3,12 @@
 /**
  * KML file amit parsolunk
  */
-$localFile    = 'tmp/local-data.xml';
-$remoteFile   = 'https://maps.google.hu/maps/ms?ie=UTF8&t=m&source=embed&vpsrc=6&f=d&daddr=Doh%C3%A1nybolt+%4047.513295,19.049402&dg=feature&authuser=0&msa=0&output=kml&msid=209554731696494539199.0004dc43dfb3a8b63d5fe';
 $disableCache = true;
 $debug        = true;
 
-define('MIN_DISTANCE', 0.05); // minimális távolság 2 bolt között
+define('KML_URL_444',   'https://maps.google.hu/maps/ms?ie=UTF8&t=m&source=embed&vpsrc=6&f=d&daddr=Doh%C3%A1nybolt+%4047.513295,19.049402&dg=feature&authuser=0&msa=0&output=kml&msid=209554731696494539199.0004dc43dfb3a8b63d5fe');
+define('KML_URL_INDEX', 'https://maps.google.com/maps/ms?ie=UTF8&t=h&source=embed&dg=feature&authuser=0&msa=0&output=kml&msid=204859493139696694978.0004dc4ded0052e13a4cc');
+define('MIN_DISTANCE',  0.05); // minimális távolság 2 bolt között
 
 /**
  * JS fejléc
@@ -57,19 +57,16 @@ function distance($lat1, $lng1, $lat2, $lng2)
 
 /**
  * @param string $remoteFile
- * @param string $localFile
  * @return bool|string
  */
-function loadXml($remoteFile, $localFile)
+function loadXml($remoteFile)
 {
 	global $cache;
+	$xmlString = '';
 	try {
-		if ($xmlString = file_get_contents($remoteFile)) {
-			if ($xmlString === false) {
-				$xmlString = file_get_contents($localFile);
-				throw new Exception('Remote File Not Found!');
-			}
-			file_put_contents($localFile, $xmlString);
+		$xmlString = file_get_contents($remoteFile)
+		if (!$xmlString) {
+			throw new Exception('Remote File Not Found!');
 		}
 	} catch(Exception $e) {
 		$cache->delete(CACHE_DATA);
@@ -80,12 +77,12 @@ function loadXml($remoteFile, $localFile)
 
 /**
  * @param string $xmlString (XML)
+ * @param array  $response
  * @return array
  */
-function pointParser($xmlString)
+function pointParser($xmlString, array $response)
 {
 	global $cache;
-	$response = array();
 	if ($data = new SimpleXMLElement($xmlString)) {
 		foreach($data->Document->Placemark as $item) {
 			$latLng = explode(",", $item->Point->coordinates);
@@ -127,7 +124,7 @@ function pointParser($xmlString)
  */
 $response = $cache->get(CACHE_DATA);
 $expire   = intval($cache->get(CACHE_EXPIRE));
-if ($expire <= time()) {
+if ($expire <= time() || !$response) {
 	// lejárt a cache
 	$cache->delete(CACHE_DATA);
 	$cache->delete(CACHE_EXPIRE);
@@ -136,8 +133,13 @@ if ($expire <= time()) {
 
 if ($disableCache || !$response) {
 	// reload data and parse
-	$xmlString = loadXml($remoteFile, $localFile);
-	$response  = pointParser($xmlString);
+	$response = array();
+	// 444's data
+	$xmlString = loadXml(KML_URL_444);
+	$response  = pointParser($xmlString, $response);
+	// index's data
+	$xmlString = loadXml(KML_URL_INDEX);
+	$response  = pointParser($xmlString, $response);
 }
 
 /**
