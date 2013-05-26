@@ -152,14 +152,15 @@ var trfk = (function(window, $)
 		};
 
 		/**
-		 * Init iOS specific resources
+		 * PRE(!) Init iOS specific resources
 		 */
-		var initIOS = function()
+		var preInitIOS = function()
 		{
-			document.ontouchstart = function(e)
-			{
-				e.preventDefault();
-			}
+			var container = $("#install");
+			container.on("touchmove", false);
+			setTimeout(function() {
+				container.find('h2').text('Add a kezdőlapodhoz!');
+			}, 3000);
 		};
 
 		/**
@@ -841,6 +842,7 @@ var trfk = (function(window, $)
 			version:      '1.0',
 			init:         initByDevice,
 			initApp:      initializeApp,
+			preInit:      preInitIOS,
 			getLocation:  user.getLocation,
 			showLocation: user.showLocation,
 			showNearest:  navigateUserToNearestPoint,
@@ -871,7 +873,7 @@ var trfk = (function(window, $)
 $(function() {
 	var app = trfk.getInstance();
 	if (app.browser.isIOS()) {
-		$("#install").on("touchmove", false);
+		app.preInit();
 	}
 	app.init();
 });
