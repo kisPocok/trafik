@@ -157,7 +157,8 @@ var trfk = (function(window, $)
 			container.on("touchmove", false);
 			if (browser.isMobileSafari()) {
 				setTimeout(function() {
-					container.find('h2').text('Add a kezdőlapodhoz!');
+					container.find('h2').remove();
+					container.find('h1').after($('<h2>Add a kezdőlapodhoz!</h2>'));
 				}, 8000);
 			}
 		};
