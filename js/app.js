@@ -141,8 +141,6 @@ var trfk = (function(window, $)
 
 		/**
 		 * Init Android specific resources
-		 *
-		 * @returns {boolean}
 		 */
 		var initAndroid = function()
 		{
@@ -166,13 +164,23 @@ var trfk = (function(window, $)
 		};
 
 		/**
+		 * App running on iOS device?
+		 *
+		 * @returns {boolean}
+		 */
+		browser.isIOS = function()
+		{
+			return navigator.userAgent.match(/(iPod|iPhone|iPad)/);
+		};
+
+		/**
 		 * Is this browser Mobile Safari?
 		 *
 		 * @returns {boolean}
 		 */
 		browser.isMobileSafari = function()
 		{
-			return navigator.userAgent.match(/(iPod|iPhone|iPad)/) && navigator.userAgent.match(/AppleWebKit/)
+			return browser.isIOS() && navigator.userAgent.match(/AppleWebKit/);
 		};
 
 		/**
@@ -821,7 +829,8 @@ var trfk = (function(window, $)
 			initApp:      initializeApp,
 			getLocation:  user.getLocation,
 			showLocation: user.showLocation,
-			showNearest:  navigateUserToNearestPoint
+			showNearest:  navigateUserToNearestPoint,
+			browser:      browser
 		};
 	}
 
@@ -846,7 +855,11 @@ var trfk = (function(window, $)
  * - Mark!
  */
 $(function() {
-	trfk.getInstance().init()
+	var app = trfk.getInstance();
+	if (app.browser.isIOS()) {
+		$("#install").on("touchmove", false);
+	}
+	app.init();
 });
 
 /**
