@@ -360,14 +360,16 @@ var trfk = (function(window, $)
 		/**
 		 * @param pos {google.maps.LatLng}
 		 * @param icon {object}
+		 * @param shadow {object}
 		 * @param title {string}
 		 * @returns {google.maps.Marker}
 		 */
-		marker.create = function(pos, icon, title)
+		marker.create = function(pos, icon, shadow, title)
 		{
 			return new google.maps.Marker({
 				position: pos,
 				icon:     icon,
+				shadow:   shadow,
 				title:    title
 			});
 		};
@@ -375,12 +377,22 @@ var trfk = (function(window, $)
 		marker.appIcon = function()
 		{
 			return new google.maps.MarkerImage(
-				'images/trafik-24x24.png',
-				new google.maps.Size(24, 24), // (width,height)
+				'images/marker-32x37.png',
+				new google.maps.Size(32, 37), // (width,height)
 				new google.maps.Point(0, 0),  // The origin point (x,y)
-				new google.maps.Point(12, 24) // The anchor point (x,y)
+				new google.maps.Point(16, 37) // The anchor point (x,y)
 			);
 		};
+
+		marker.shadow = function()
+		{
+			return {
+				url:   'images/marker-shadow-119x119.png',
+				size:   new google.maps.Size(119, 119),
+				origin: new google.maps.Point(0, 0),
+				anchor: new google.maps.Point(20, 40)
+			};
+		}
 
 		/**
 		 * @param markerItem {google.maps.Marker}
@@ -501,10 +513,11 @@ var trfk = (function(window, $)
 		var getLocationMarkers = function(locationList, onClickCallback)
 		{
 			var markers = [];
-			var icon = marker.appIcon();
+			var icon    = marker.appIcon();
+			var shadow  = marker.shadow();
 			$(locationList).each(function(i, data) {
 				var pos = new google.maps.LatLng(data.lng, data.lat);
-				var markerItem = marker.create(pos, icon, 'Trafik ' + (i+1)); // TODO fix item name!
+				var markerItem = marker.create(pos, icon, shadow, 'Trafik ' + (i+1)); // TODO fix item name!
 				google.maps.event.addListener(markerItem, 'click', function()
 				{
 					return onClickCallback(markerItem);
