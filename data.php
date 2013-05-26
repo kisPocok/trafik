@@ -4,7 +4,7 @@
  * KML file amit parsolunk
  */
 $localFile    = 'tmp/local-data.xml';
-$remoteFile   = 'https://maps.google.hu/maps/ms?ie=UTF8&t=m&source=embed&vpsrc=6&f=d&daddr=Doh%C3%A1nybolt+%4047.513295,19.049402&authuser=0&msa=0&output=kml&msid=209554731696494539199.0004dc43dfb3a8b63d5fe';
+$remoteFile   = 'https://maps.google.hu/maps/ms?ie=UTF8&t=m&source=embed&vpsrc=6&f=d&daddr=Doh%C3%A1nybolt+%4047.513295,19.049402&dg=feature&authuser=0&msa=0&output=kml&msid=209554731696494539199.0004dc43dfb3a8b63d5fe';
 $disableCache = false;
 $debug        = false;
 
