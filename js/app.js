@@ -160,7 +160,7 @@ var trfk = (function(window, $)
 			container.on("touchmove", false);
 			setTimeout(function() {
 				container.find('h2').text('Add a kezdőlapodhoz!');
-			}, 3000);
+			}, 10000);
 		};
 
 		/**
@@ -884,5 +884,6 @@ $(function() {
  */
 var addToHomeConfig = {
 	message: 'Add a kezdőlapodhoz! Trafik kereső alkalmazást a(z) `%icon` ikon megnyomásával telepítheted <strong>%device</strong> készülékedre.',
-	lifespan: 200000
+	lifespan: 200000,
+	expire:   0
 };
