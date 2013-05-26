@@ -105,11 +105,22 @@ var trfk = (function(window, $)
 		var initializeMap = function()
 		{
 			var container = document.getElementById("map-canvas");
+			var styleParams = [
+				{
+					// disable business texts
+					featureType: 'poi.business',
+					elementType: 'labels',
+					stylers: [
+						{ visibility: 'off' }
+					]
+				}
+			];
 			var params = {
 				center:    user.loadLastLocation()||getDefaultLocation(),
 				zoom:      16,
 				mapTypeId: google.maps.MapTypeId.ROADMAP,
-				streetViewControl: true
+				streetViewControl: true,
+				styles: styleParams
 			};
 			return new google.maps.Map(container, params);
 		};
