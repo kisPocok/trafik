@@ -64,7 +64,7 @@ function loadXml($remoteFile)
 	global $cache;
 	$xmlString = '';
 	try {
-		$xmlString = file_get_contents($remoteFile)
+		$xmlString = file_get_contents($remoteFile);
 		if (!$xmlString) {
 			throw new Exception('Remote File Not Found!');
 		}
