@@ -91,11 +91,10 @@ $autoRun     = isset($_GET['autorun']) && intval($_GET['autorun']) === 1;
 <div id="legal" class="page hidden" style="display:none;">
 	<div>
 		<h2>Felhasználási feltételek</h2>
-		<p>Szeretném, hogy tudd, mert fontos. A térképet a <a href="https://developers.google.com/maps/documentation/" target="_blank">Google Maps</a> szolgáltatja. Előfordulhat, hogy a felület néhol kitakarja a logóját, ez nem szándékos.</p>
-		<p>Anoním statisztikai adatot gyűjtök az alkalmazás használatáról. Nem kell aggódnod emiatt, <b>nem rögzít semmilyen személyes adatot</b>.</p>
-		<p>Vasárnaponként a kandalló melegében reménykedek, sikerült jobbá tennem a világot.</p>
-		<p>Twitter: <a href="http://twitter.com/kisPocok" target="_blank">@kisPocok</a></p>
-		<p>Blog: <a href="http://kispocok.blog.hu?ref=trafik" target="_blank">kispocok.blog.hu</a></p>
+		<p>Szeretném, hogy tudj pár dolgot, mert fontos. A térképet a <a href="https://developers.google.com/maps/documentation/" target="_blank">Google Maps</a> szolgáltatja, trafik pontok nem lennének <a href="http://444.hu/2013/05/14/frissult-magyarorszag-legjobb-trafikterkepe/" target="_blank">444</a> nélkül, valamint az alkalmazás kezdőképét a <a href="http://pattern.dk/sun/" target="_blank">Sun</a> inspirálta.</p>
+		<p>Anoním statisztikai adatot gyűjtök az alkalmazás használatáról. Nem kell aggódnod emiatt, <b>nem rögzítek semmilyen személyes adatot</b>.</p>
+		<p class="fineprint">Vasárnaponként a kandalló melegében reménykedek, sikerült jobbá tennem a világot.</p>
+		<p>Én <a href="http://twitter.com/kisPocok" target="_blank">@kisPocok</a>, írtam az <a href="http://kispocok.blog.hu/2013/05/30/trafik_app" target="_blank">app</a>-ról. <a href="mailto:trafikkereso@gmail.com">Bugreport</a>-ot kösz!</p>
 		<a href="#" class="btn btn-large btn-block btn-success">Bezárás</a>
 	</div>
 </div>

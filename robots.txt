@@ -1,3 +1,4 @@
 User-agent: *
 Disallow: /map.html
 Disallow: /data.php
+Disallow: /tmp/*
