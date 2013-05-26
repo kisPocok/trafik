@@ -80,9 +80,6 @@ var trfk = (function(window, $)
 						initAndroid();
 					}
 
-					if (browser.isIOS) {
-						initIOS();
-					}
 					map           = initializeMap();
 					streetView    = initializeStreetView(map);
 					markers       = getLocationMarkers(locations, marker.selfNavigationClick);
