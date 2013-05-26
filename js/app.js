@@ -80,6 +80,9 @@ var trfk = (function(window, $)
 						initAndroid();
 					}
 
+					if (browser.isIOS) {
+						initIOS();
+					}
 					map           = initializeMap();
 					streetView    = initializeStreetView(map);
 					markers       = getLocationMarkers(locations, marker.selfNavigationClick);
@@ -141,13 +144,22 @@ var trfk = (function(window, $)
 
 		/**
 		 * Init Android specific resources
-		 *
-		 * @returns {boolean}
 		 */
 		var initAndroid = function()
 		{
 			window.scrollTo(0,1);
 			//$('body').addClass('device-android');
+		};
+
+		/**
+		 * Init iOS specific resources
+		 */
+		var initIOS = function()
+		{
+			document.ontouchstart = function(e)
+			{
+				e.preventDefault();
+			}
 		};
 
 		/**
@@ -166,13 +178,23 @@ var trfk = (function(window, $)
 		};
 
 		/**
+		 * App running on iOS device?
+		 *
+		 * @returns {boolean}
+		 */
+		browser.isIOS = function()
+		{
+			return navigator.userAgent.match(/(iPod|iPhone|iPad)/);
+		};
+
+		/**
 		 * Is this browser Mobile Safari?
 		 *
 		 * @returns {boolean}
 		 */
 		browser.isMobileSafari = function()
 		{
-			return navigator.userAgent.match(/(iPod|iPhone|iPad)/) && navigator.userAgent.match(/AppleWebKit/)
+			return browser.isIOS() && navigator.userAgent.match(/AppleWebKit/);
 		};
 
 		/**
