@@ -205,7 +205,7 @@ var trfk = (function(window, $)
 		 */
 		browser.isMobileChrome = function()
 		{
-			return browser.isMobileSafari() && navigator.userAgent.match('/CriOS/');
+			return browser.isMobileSafari() && navigator.userAgent.match(/CriOS/);
 		}
 
 		/**
