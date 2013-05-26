@@ -80,6 +80,9 @@ var trfk = (function(window, $)
 						initAndroid();
 					}
 
+					if (browser.isIOS) {
+						initIOS();
+					}
 					map           = initializeMap();
 					streetView    = initializeStreetView(map);
 					markers       = getLocationMarkers(locations, marker.selfNavigationClick);
@@ -146,6 +149,17 @@ var trfk = (function(window, $)
 		{
 			window.scrollTo(0,1);
 			//$('body').addClass('device-android');
+		};
+
+		/**
+		 * Init iOS specific resources
+		 */
+		var initIOS = function()
+		{
+			document.ontouchstart = function(e)
+			{
+				e.preventDefault();
+			}
 		};
 
 		/**
