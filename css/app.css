@@ -376,7 +376,7 @@ Welcome layout
 	z-index: 11;
 }
 #install .phone {
-	background-image: url(../images/welcome-1100x990.png);
+	background-image: url(../images/welcome-1100x990-compressed.png);
 	background-repeat: no-repeat;
 	background-position: center 100px;
 
