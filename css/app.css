@@ -409,6 +409,25 @@ Welcome layout
 
 /*
 --------------------------------------
+For Nokia Lumia 800
+--------------------------------------
+*/
+@media (max-width: 480px) {
+	#destination .bottom-line > * {
+		width: 34%;
+		padding-left: 0;
+		padding-right: 0;
+	}
+	#destination .bottom-line > *:first-child {
+		width: 33%;
+	}
+	#destination .bottom-line > *:last-child {
+		width: 33%;
+	}
+}
+
+/*
+--------------------------------------
 Retina-specific devices
 --------------------------------------
 */
@@ -427,24 +446,6 @@ and (orientation: portrait) {
 	}
 	#destination .bottom-line > *:last-child {
 		width: 106px;
-	}
-}
-/*
---------------------------------------
-For Nokia Lumia 800
---------------------------------------
-*/
-@media (max-width: 480px) {
-	#destination .bottom-line > * {
-		width: 34%;
-		padding-left: 0;
-		padding-right: 0;
-	}
-	#destination .bottom-line > *:first-child {
-		width: 33%;
-	}
-	#destination .bottom-line > *:last-child {
-		width: 33%;
 	}
 }
 
