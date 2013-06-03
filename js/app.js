@@ -42,15 +42,27 @@ var trfk = (function(window, $)
 		 */
 		var initByDevice = function()
 		{
+			visibility.init();
+
 			if (browser.isStandaloneApp()) {
 				// telepített alkalmazás, indítás
 				initializeApp();
-			} else if (browser.isMobileSafari() && !browser.isMobileChrome()) {
-				$('#run').remove();
-				addToHome.show();
 			} else {
-				// minden más, gomb után mehet a menet!
-				$('#run').click(initializeApp);
+				var afterImageLoading = function() {
+					$('#install').show();
+					if (browser.isMobileSafari() && !browser.isMobileChrome()) {
+						// telepíteni kell
+						$('#run').remove();
+						addToHome.show();
+					} else {
+						// minden más, gomb után mehet a menet!
+						$('#run').click(initializeApp);
+					}
+				};
+				var welcomeImg = new Image();
+				welcomeImg.onload  = afterImageLoading;
+				welcomeImg.onerror = afterImageLoading;
+				welcomeImg.src = 'http://traffik.local/images/welcome-1100x990-compressed.png';
 			}
 		};
 
@@ -60,10 +72,10 @@ var trfk = (function(window, $)
 		var initializeApp = function()
 		{
 			$('#install').remove();
-			$('#map-canvas, #destination, #settings, #legal').show();
+			$('#map-canvas, #destination, body > .page').show();
 
 			Q.fcall(checkSoftwareUpdate)
-				.then(user.getLocation)
+				.then(activateUI)
 				.then(locationData.get)
 				.then(function(locations)
 				{
@@ -73,7 +85,7 @@ var trfk = (function(window, $)
 					};
 
 					if (!locations || locations.length < 1) {
-						console.error('Hiba történt! Nem elérhető a boltok listája. Próbáld meg újra.');
+						defaultErrorHandler(new Error('Jelenleg nem elérhető a boltok listája.'));
 					}
 
 					if (browser.isAndroid()) {
@@ -90,10 +102,6 @@ var trfk = (function(window, $)
 						console.log('directions_changed TODO')
 					});
 					*/
-
-					activateUI();
-					visibility.init();
-					$(document).bind('touchmove', false); // disable scrolling
 				})
 				.then(navigateUserToNearestPoint)
 				.fail(defaultErrorHandler)
@@ -200,6 +208,16 @@ var trfk = (function(window, $)
 		};
 
 		/**
+		 * Is this browser Safari?
+		 *
+		 * @returns {boolean}
+		 */
+		browser.isSafari = function()
+		{
+			return navigator.userAgent.indexOf("Safari") > -1;
+		};
+
+		/**
 		 * Is this browser Mobile Chrome?
 		 *
 		 * @returns {boolean}
@@ -291,6 +309,7 @@ var trfk = (function(window, $)
 		visibility.enabled = function()
 		{
 			user.clearSavedLocation();
+			$('#install').find('a').show();
 		};
 
 		/**
@@ -299,6 +318,7 @@ var trfk = (function(window, $)
 		visibility.disabled = function()
 		{
 			// do something later...
+			$('#install').find('a').addClass('already').hide();
 		};
 
 		/**
@@ -369,7 +389,8 @@ var trfk = (function(window, $)
 					def.resolve(pos);
 				}, function()
 				{
-					def.reject(new Error('Kérlek, engedélyezd a helyzeted megosztását!'));
+					var er = new Error(getLocationErrorMsgByBrowser());
+					def.reject(er);
 				}, params);
 			} else {
 				// Browser doesn't support Geolocation
@@ -441,7 +462,7 @@ var trfk = (function(window, $)
 		 */
 		var getDefaultLocation = function()
 		{
-			return new google.maps.LatLng(47.497912, 19.040235);
+			return new google.maps.LatLng(47.498381, 19.040426);
 		};
 
 		/**
@@ -822,14 +843,32 @@ var trfk = (function(window, $)
 		/**
 		 * @param error
 		 */
-		var defaultErrorHandler = function(error)
+		var defaultErrorHandler = function(error, callback)
 		{
-			console.error('Hiba történt!', error.message);
-			console.error(error.stack);
+			$('body > .page').hide();
+			var errorWidget = $('#error');
+			errorWidget.find('h2').text('Hiba történt');
+			errorWidget.find('p').html(error.message);
+			errorWidget.show();
+			errorWidget.removeClass('hidden');
+			if (callback) {
+				errorWidget.find('.btn').click(callback);
+			}
+			$('#destination').addClass('hidden');
+
+
+			if (console && console.error) {
+				console.error(error.stack);
+			}
 		};
 
+		/**
+		 * Activate UI
+		 */
 		var activateUI = function()
 		{
+			$(document).bind('touchmove', false); // disable scrolling
+
 			$('.settings').click(function(event)
 			{
 				event.stopPropagation();
@@ -837,16 +876,27 @@ var trfk = (function(window, $)
 				return false;
 			});
 
-			$('.legal').click(function(event)
+			$('.legal a').click(function(event)
 			{
 				event.stopPropagation();
 				$('#legal').removeClass('hidden');
+				return false;
 			});
 
 			$('#legal').find('.btn').click(function(event)
 			{
 				event.stopPropagation();
 				$('#legal').addClass('hidden');
+				return false;
+			});
+
+			$('#error').find('.btn').click(function(event)
+			{
+				event.stopPropagation();
+				$('body > .page').show();
+				$('#error').addClass('hidden');
+				$('#destination').removeClass('hidden');
+				return false;
 			});
 
 			$('.radio').click(function(event)
@@ -909,6 +959,22 @@ var trfk = (function(window, $)
 			return nearest;
 		};
 
+		var getLocationErrorMsgByBrowser = function()
+		{
+			var msg = 'Kérlek, engedélyezd a lokációd megosztását az alkalmazással! Enélkül nem tud az alkalmazás a térképen megtalálni a pontos helyzeted.';
+			/*
+			if (browser.isChrome() || browser.isMobileChrome()) {
+				msg += '</p><h2>Engedélyezése</h2><p>Beállítások &gt; Személyes adatok &gt; Tartalom beállítása &gt; Helymeghatározás';
+			} else if (browser.isMobileSafari() || browser.isStandaloneApp()) {
+				msg += '</p><h2>Engedélyezése</h2><p>Kezdőlap > Beállítások &gt; Álltalános beállítások&nbsp;&gt; Törlés &gt; Lokáció törlése';
+			} else if (browser.isSafari) {
+				msg += '</p><h2>Engedélyezése</h2><p>Beállítások &gt; Adatvédelem &gt; Lokáció';
+			}
+			*/
+			return msg;
+
+		};
+
 		var checkSoftwareUpdate = function()
 		{
 			var def = Q.defer();
@@ -934,7 +1000,7 @@ var trfk = (function(window, $)
 			version:      '1.0',
 			init:         initByDevice,
 			initApp:      initializeApp,
-			preInit:      preInitIOS,
+			preInitIOS:   preInitIOS,
 			getLocation:  user.getLocation,
 			showLocation: user.showLocation,
 			showNearest:  navigateUserToNearestPoint,
@@ -966,7 +1032,7 @@ var trfk = (function(window, $)
 $(function() {
 	var app = trfk.getInstance();
 	if (app.browser.isIOS()) {
-		app.preInit();
+		app.preInitIOS();
 	}
 	app.init();
 });

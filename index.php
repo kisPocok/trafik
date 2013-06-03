@@ -43,7 +43,7 @@ $autoRun     = isset($_GET['autorun']) && intval($_GET['autorun']) === 1;
 <body>
 
 <!-- Installer layout -->
-<div id="install">
+<div id="install" style="display:none;">
 	<h1><?=$appTitle; ?></h1>
 	<h2>Megkeresi a legközelebbit.</h2>
 	<a id="run" href="#" class="btn btn-large btn-block">Próbáld ki!</a>
@@ -96,6 +96,15 @@ $autoRun     = isset($_GET['autorun']) && intval($_GET['autorun']) === 1;
 		<p class="fineprint">Vasárnaponként a kandalló melegében reménykedek, sikerült jobbá tennem a világot.</p>
 		<p>Én <a href="http://twitter.com/kisPocok" target="_blank">@kisPocok</a>, írtam az <a href="http://kispocok.blog.hu/2013/05/30/trafik_app" target="_blank">app</a>-ról. <a href="mailto:trafikkereso@gmail.com">Bugreport</a>-ot kösz!</p>
 		<a href="#" class="btn btn-large btn-block btn-success">Bezárás</a>
+	</div>
+</div>
+
+<!-- Error page -->
+<div id="error" class="page hidden">
+	<div>
+		<h2>Hiba történt</h2>
+		<p></p>
+		<a href="#" class="btn btn-large btn-block btn-warning">Bezárás</a>
 	</div>
 </div>
 

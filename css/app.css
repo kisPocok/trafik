@@ -123,6 +123,7 @@ html {
 	height: 100%;
 	text-rendering: optimizeLegibility !important;
 	-webkit-font-smoothing: antialiased !important;
+	overflow: hidden;
 }
 body {
 	height: 100%;
@@ -264,6 +265,8 @@ Standard layout definitions
 	height: 480px;
 	margin: -480px auto 0 auto;
 	position: relative;
+	/*left: 1%;
+	right: 1%;*/
 	z-index: 12;
 	background: #fff;
 	max-width: 420px;
@@ -273,9 +276,12 @@ Standard layout definitions
 	-moz-transition: all 0.5s;
 	-webkit-transition: all 0.5s;
 	-o-transition: all 0.5s;
+	/*display: block !important;*/
 }
 .page.hidden {
 	margin-top: 0;
+	display: none;
+	/*display: none !important;*/
 }
 .page > div {
 	padding: 20px;
@@ -308,6 +314,14 @@ Term of use layout
 */
 #legal .btn {
 	margin-top: 23px;
+}
+/*
+--------------------------------------
+Error page
+--------------------------------------
+*/
+#error .btn {
+	margin-top: 195px;
 }
 /*
 --------------------------------------
@@ -367,6 +381,11 @@ Welcome layout
 #install a:hover {
 	background: rgba(255,255,255,0.8);
 	color: #e35c4a;
+}
+#install a.already {
+	-webkit-animation-delay: 0s;
+	-moz-animation-delay: 0s;
+	-ms-animation-delay: 0s;
 }
 #install {
 	position: absolute;
