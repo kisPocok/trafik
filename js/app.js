@@ -85,6 +85,14 @@ var trfk = (function(window, $)
 					markers       = getLocationMarkers(locations, marker.selfNavigationClick);
 					markerCluster = new MarkerClusterer(map, markers, markerParams);
 
+					if (browser.isChrome()) {
+						document.addEventListener('webkitvisibilitychange', function(e)
+						{
+							// empty location cache
+							user.clearSavedLocation();
+						}, false);
+					}
+
 					/* TODO handle hiding markers because layout hangs on map
 					google.maps.event.addListener(directionsDisplay, 'directions_changed', function() {
 						console.log('directions_changed TODO')
@@ -197,6 +205,16 @@ var trfk = (function(window, $)
 		{
 			return browser.isIOS() && navigator.userAgent.match(/AppleWebKit/);
 		};
+
+		/**
+		 * Is this browser Mobile Chrome?
+		 *
+		 * @returns {boolean}
+		 */
+		browser.isChrome = function()
+		{
+			return window.chrome;
+		}
 
 		/**
 		 * Is this browser Mobile Chrome?
@@ -766,8 +784,7 @@ var trfk = (function(window, $)
 				$('#legal').addClass('hidden');
 			});
 
-			$('.radio')
-				.click(function(event)
+			$('.radio').click(function(event)
 				{
 					var element = $(event.target);
 					if (element.hasClass('radio')) {
