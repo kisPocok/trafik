@@ -85,14 +85,6 @@ var trfk = (function(window, $)
 					markers       = getLocationMarkers(locations, marker.selfNavigationClick);
 					markerCluster = new MarkerClusterer(map, markers, markerParams);
 
-					if (browser.isChrome()) {
-						document.addEventListener('webkitvisibilitychange', function(e)
-						{
-							// empty location cache
-							user.clearSavedLocation();
-						}, false);
-					}
-
 					/* TODO handle hiding markers because layout hangs on map
 					google.maps.event.addListener(directionsDisplay, 'directions_changed', function() {
 						console.log('directions_changed TODO')
@@ -100,6 +92,7 @@ var trfk = (function(window, $)
 					*/
 
 					activateUI();
+					visibility.init();
 					$(document).bind('touchmove', false); // disable scrolling
 				})
 				.then(navigateUserToNearestPoint)
@@ -211,19 +204,19 @@ var trfk = (function(window, $)
 		 *
 		 * @returns {boolean}
 		 */
-		browser.isChrome = function()
-		{
-			return window.chrome;
-		}
-
-		/**
-		 * Is this browser Mobile Chrome?
-		 *
-		 * @returns {boolean}
-		 */
 		browser.isMobileChrome = function()
 		{
 			return browser.isMobileSafari() && navigator.userAgent.match(/CriOS/);
+		}
+
+		/**
+		 * Is this browser (desktop) Chrome?
+		 *
+		 * @returns {boolean}
+		 */
+		browser.isChrome = function()
+		{
+			return window.chrome;
 		}
 
 		/**
@@ -234,6 +227,78 @@ var trfk = (function(window, $)
 		browser.isAndroid = function()
 		{
 			return navigator.userAgent.match(/Android/i);
+		};
+
+		/**
+		 * Page Visibility API
+		 */
+		var visibility = {};
+
+		/**
+		 * Default parameter
+		 * @type {string}
+		 */
+		visibility.browserHiddenParam = "hidden";
+
+		/**
+		 * Default Event name
+		 * @type {string}
+		 */
+		visibility.browserChangeEvent = "visibilitychange";
+
+		/**
+		 * Execute page visibility api
+		 */
+		visibility.init = function()
+		{
+			var d = window.document;
+			if (typeof d.mozHidden !== "undefined") {
+				visibility.browserHiddenParam = "mozHidden";
+				visibility.browserChangeEvent = "mozvisibilitychange";
+			} else if (typeof d.msHidden !== "undefined") {
+				visibility.browserHiddenParam = "msHidden";
+				visibility.browserChangeEvent = "msvisibilitychange";
+			} else if (typeof d.webkitHidden !== "undefined") {
+				visibility.browserHiddenParam = "webkitHidden";
+				visibility.browserChangeEvent = "webkitvisibilitychange";
+			}
+
+			// add event for state change handling
+			d.addEventListener(visibility.browserChangeEvent, function()
+				{
+					if (visibility.isVisible()) {
+						visibility.enabled();
+					} else {
+						visibility.disabled();
+					}
+				}, false
+			);
+		};
+
+		/**
+		 * Is page visible now?
+		 *
+		 * @returns {boolean}
+		 */
+		visibility.isVisible = function()
+		{
+			return !window.document[visibility.browserHiddenParam];
+		}
+
+		/**
+		 * Add items to execute every on page went visible
+		 */
+		visibility.enabled = function()
+		{
+			user.clearSavedLocation();
+		};
+
+		/**
+		 * Add items to execute every on page went invisible
+		 */
+		visibility.disabled = function()
+		{
+			// do something later...
 		};
 
 		/**
@@ -873,7 +938,8 @@ var trfk = (function(window, $)
 			getLocation:  user.getLocation,
 			showLocation: user.showLocation,
 			showNearest:  navigateUserToNearestPoint,
-			browser:      browser
+			browser:      browser,
+			visibility:   visibility
 		};
 	}
 
