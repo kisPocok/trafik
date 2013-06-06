@@ -117,7 +117,11 @@ $autoRun     = isset($_GET['autorun']) && intval($_GET['autorun']) === 1;
 <script>var addToHomeConfig = { autostart:false, message:'<?=$add2home; ?>'};</script>
 <script src="js/add2home.js"></script>
 <?php if($autoRun): ?>
-<script>/*AutoRun:ON*/$(function(){trfk.getInstance().initApp();});</script>
+<script>/*AutoRun:ON*/$(function(){
+		console.log('autostart1')
+		trfk.getInstance().initApp();
+		console.log('autostart2')
+	});</script>
 <?php endif; ?>
 <script>
 (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
