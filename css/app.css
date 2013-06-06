@@ -407,7 +407,7 @@ Welcome layout
 	z-index: 11;
 }
 #install .phone {
-	background-image: url(../images/welcome-1100x990-compressed.png);
+	/*background-image: url(../images/welcome-1100x990-compressed.png);*/
 	background-repeat: no-repeat;
 	background-position: center 100px;
 
@@ -487,9 +487,6 @@ and (orientation: portrait) {
 	#legal.page.hidden {
 		margin-top: 0;
 	}
-	#install .phone {
-		background-image: none;
-	}
 }
 @media only screen
 and (-webkit-min-device-pixel-ratio: 2)
@@ -501,9 +498,6 @@ and (orientation: landscape) {
 	}
 	#legal .fineprint {
 		display: none;
-	}
-	#install .phone {
-		background-image: none;
 	}
 }
 
