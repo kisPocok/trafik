@@ -867,16 +867,16 @@ var trfk = (function(window, $)
 		 */
 		var activateUI = function()
 		{
+			console.log('activateUI')
 			$(document).bind('touchmove', false); // disable scrolling
 
-			var settingsClick = function(event)
+			$('.settings').click(function(event)
 			{
+				console.log('settings::click')
 				event.stopPropagation();
 				$('#destination, #settings').toggleClass('hidden');
 				return false;
-			}
-
-			$('.settings').click(settingsClick).touchstart(settingsClick);
+			});
 
 			$('.legal a').click(function(event)
 			{
