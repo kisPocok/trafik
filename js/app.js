@@ -33,6 +33,7 @@ var trfk = (function(window, $)
 		 * Variables
 		 */
 		var map, streetView, markers, markerCluster, transportMode;
+		var activatedUI       = false;
 		var directionsDisplay = new google.maps.DirectionsRenderer();
 		var directionsService = new google.maps.DirectionsService();
 		var geocoder          = new google.maps.Geocoder();
@@ -867,6 +868,11 @@ var trfk = (function(window, $)
 		 */
 		var activateUI = function()
 		{
+			if (activatedUI) {
+				return false;
+			}
+			activatedUI = true;
+
 			console.log('activateUI')
 			$(document).bind('touchmove', false); // disable scrolling
 
