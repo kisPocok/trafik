@@ -44,9 +44,11 @@ $autoRun     = isset($_GET['autorun']) && intval($_GET['autorun']) === 1;
 
 <!-- Installer layout -->
 <div id="install" style="display:none;">
-	<h1><?=$appTitle; ?></h1>
-	<h2>Megkeresi a legközelebbit.</h2>
-	<a id="run" href="#" class="btn btn-large btn-block">Próbáld ki!</a>
+	<div>
+		<h1><?=$appTitle; ?></h1>
+		<h2>Megkeresi a legközelebbit.</h2>
+		<a id="run" href="#" class="btn btn-large btn-block">Próbáld ki!</a>
+	</div>
 	<div class="phone"></div>
 </div>
 

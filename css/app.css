@@ -337,13 +337,16 @@ Error page
 Welcome layout
 --------------------------------------
 */
+#install > div {
+	margin-left: 20px;
+}
 #install h1,
 #install h2 {
 	position: relative;
 	z-index: 12;
 	max-width: 325px;
-	margin-left: 20px;
 
+	background-color: rgba(227, 92, 74, 0.8);
 	color: rgba(255, 255, 255, 0.8);
 	font-size: 72px;
 	font-weight: bold;
@@ -351,6 +354,7 @@ Welcome layout
 }
 #install h1 {
 	margin-top: 200px;
+	margin-bottom: 0;
 	border-bottom: 1px solid rgba(255, 255, 255, 0.4);
 	-webkit-font-smoothing: subpixel-antialiased !important;
 
@@ -359,10 +363,11 @@ Welcome layout
 	-ms-animation:fadeInRight 0.5s ease both;
 }
 #install h2 {
-	background-color: rgba(227, 92, 74, 0.8);
 	font-size: 26px;
 	font-weight: 100;
-	display: inline;
+	margin-top: 0;
+	padding-top: 10px;
+	padding-bottom: 10px;
 
 	-webkit-animation:fadeInRight 0.5s ease both;
 	-moz-animation:fadeInRight 0.5s ease both;
@@ -371,10 +376,12 @@ Welcome layout
 	-webkit-animation-delay: 0.3s;
 	-moz-animation-delay: 0.3s;
 	-ms-animation-delay: 0.3s;
+
+	border-bottom-right-radius: 6px;
 }
 #install a {
-	margin: 20px;
 	width: 150px;
+	margin-top: 10px;
 	position: relative;
 	z-index: 13;
 
