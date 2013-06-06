@@ -376,8 +376,6 @@ Welcome layout
 	-webkit-animation-delay: 0.3s;
 	-moz-animation-delay: 0.3s;
 	-ms-animation-delay: 0.3s;
-
-	border-bottom-right-radius: 6px;
 }
 #install a {
 	width: 150px;
