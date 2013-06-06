@@ -288,6 +288,11 @@ Standard layout definitions
 }
 .page h2 {
 	margin: 0 0 10px 0;
+
+	/* Too long text shortening... */
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 /*
 --------------------------------------
@@ -468,6 +473,9 @@ and (orientation: portrait) {
 	}
 	#destination .top-line > div {
 		max-width: 215px;
+	}
+	#settings .legal {
+		margin-top: 38px;
 	}
 }
 

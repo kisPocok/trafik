@@ -873,12 +873,10 @@ var trfk = (function(window, $)
 			}
 			activatedUI = true;
 
-			console.log('activateUI')
 			$(document).bind('touchmove', false); // disable scrolling
 
 			$('.settings').click(function(event)
 			{
-				console.log('settings::click')
 				event.stopPropagation();
 				$('#destination, #settings').toggleClass('hidden');
 				return false;
