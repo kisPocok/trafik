@@ -49,13 +49,13 @@ var trfk = (function(window, $)
 				// telepített alkalmazás, indítás
 				initializeApp();
 			} else {
-				var imgSrc = browser.isMobileSafari()
+				var imgSrc = browser.isMobileSafari() && !browser.isIpad()
 					? '/images/welcome-550x440-compressed.png'
 					: '/images/welcome-1100x990-compressed.png';
 				var install = $('#install');
 				var style = {
 					backgroundImage: 'url(' + imgSrc + ')',
-					marginTop: browser.isMobileSafari() ? 150 : 0
+					marginTop: browser.isMobileSafari() && !browser.isIpad() ? 150 : 0
 				};
 				var afterImageLoading = function()
 				{
@@ -211,6 +211,16 @@ var trfk = (function(window, $)
 		browser.isIOS = function()
 		{
 			return navigator.userAgent.match(/(iPod|iPhone|iPad)/);
+		};
+
+		/**
+		 * App running on iPad device?
+		 *
+		 * @returns {boolean}
+		 */
+		browser.isIpad = function()
+		{
+			return navigator.userAgent.match(/iPad/i);
 		};
 
 		/**
