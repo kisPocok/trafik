@@ -474,8 +474,11 @@ and (orientation: portrait) {
 	#destination .top-line > div {
 		max-width: 215px;
 	}
+	.page {
+		max-width: 100%;
+	}
 	#legal.page {
-		margin-top: -554px;
+		margin-top: -628px;
 	}
 }
 
