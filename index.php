@@ -35,10 +35,12 @@ $autoRun     = isset($_GET['autorun']) && intval($_GET['autorun']) === 1;
 	<link rel="apple-touch-icon" sizes="144x144" href="apple-touch-icon-144x144-precomposed.png" />
 	<link rel="canonical" href="<?=$url; ?>" />
 
+	<!--
 	<link rel="stylesheet" href="css/bootstrap.min.css">
 	<link rel="stylesheet" href="css/add2home.css">
 	<link rel="stylesheet" href="css/flat-ui.css">
 	<link rel="stylesheet" href="css/app.css">
+	-->
 </head>
 <body>
 
@@ -107,7 +109,7 @@ $autoRun     = isset($_GET['autorun']) && intval($_GET['autorun']) === 1;
 		<a href="#" class="btn btn-large btn-block btn-warning">Bezárás</a>
 	</div>
 </div>
-
+<!--
 <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyBTYqceLuszLWf1_yF9CExEitMtvkZQIzE&sensor=true&language=hu&libraries=geometry"></script>
 <script src="js/google.maps.marker-cluster.js"></script>
 <script src="js/jquery-1.9.1.min.js"></script>
@@ -131,5 +133,6 @@ $autoRun     = isset($_GET['autorun']) && intval($_GET['autorun']) === 1;
 ga('create', 'UA-41202408-1', 'herokuapp.com');
 ga('send', 'pageview');
 </script>
+-->
 </body>
 </html>
