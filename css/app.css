@@ -466,6 +466,9 @@ and (orientation: portrait) {
 	#destination .bottom-line > *:last-child {
 		width: 106px;
 	}
+	#destination .top-line > div {
+		max-width: 215px;
+	}
 }
 
 /*
