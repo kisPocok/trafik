@@ -3,7 +3,7 @@
 $title       = "Trafik kereső";
 $appTitle    = "Trafik";
 $description = "Trafik kereső alkalmazás. Megkeresi neked a legközelebbit.";
-$add2home    = "Add a kezdőlapodhoz! Trafik kereső alkalmazást az `%icon` ikon megnyomásával telepítheted <strong>%device</strong> készülékedre.";
+$add2home    = "Add a főképernyődhöz! Trafik kereső alkalmazást az `%icon` ikon megnyomásával telepítheted <strong>%device</strong> készülékedre.";
 $url         = "http://" . $_SERVER['HTTP_HOST'];
 
 $autoRun     = isset($_GET['autorun']) && intval($_GET['autorun']) === 1;
