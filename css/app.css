@@ -359,8 +359,10 @@ Welcome layout
 	-ms-animation:fadeInRight 0.5s ease both;
 }
 #install h2 {
+	background-color: rgba(227, 92, 74, 0.8);
 	font-size: 26px;
 	font-weight: 100;
+	display: inline;
 
 	-webkit-animation:fadeInRight 0.5s ease both;
 	-moz-animation:fadeInRight 0.5s ease both;
@@ -376,7 +378,7 @@ Welcome layout
 	position: relative;
 	z-index: 13;
 
-	background: transparent;
+	background-color: rgba(227, 92, 74, 0.8);
 	border: 1px solid rgba(255,255,255,0.8);
 
 	-webkit-animation:fadeInRight 0.5s ease both;
