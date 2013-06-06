@@ -35,12 +35,10 @@ $autoRun     = isset($_GET['autorun']) && intval($_GET['autorun']) === 1;
 	<link rel="apple-touch-icon" sizes="144x144" href="apple-touch-icon-144x144-precomposed.png" />
 	<link rel="canonical" href="<?=$url; ?>" />
 
-	<!--
 	<link rel="stylesheet" href="css/bootstrap.min.css">
 	<link rel="stylesheet" href="css/add2home.css">
 	<link rel="stylesheet" href="css/flat-ui.css">
 	<link rel="stylesheet" href="css/app.css">
-	-->
 </head>
 <body>
 
@@ -102,7 +100,7 @@ $autoRun     = isset($_GET['autorun']) && intval($_GET['autorun']) === 1;
 </div>
 
 <!-- Error page -->
-<div id="error" class="page hidden">
+<div id="error" class="page hidden" style="display:none;">
 	<div>
 		<h2>Hiba történt</h2>
 		<p></p>
