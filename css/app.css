@@ -500,7 +500,17 @@ and (orientation: landscape) {
 		display: none;
 	}
 }
-
+/*
+--------------------------------------
+For SMALL desktop
+--------------------------------------
+*/
+@media (max-width: 800px) {
+	#install {
+		width: 100%;
+		margin-left: -50%;
+	}
+}
 /*
 --------------------------------------
 For BIG desktop
