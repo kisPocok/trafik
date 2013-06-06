@@ -1,6 +1,6 @@
 /**
  * Console for all browser
- *
+ */
 var method;
 var noop = function () {};
 var methods = [
@@ -20,6 +20,7 @@ while (length--) {
 		console[method] = noop;
 	}
 }
+
 /**
  * Application
  */
@@ -42,7 +43,6 @@ var trfk = (function(window, $)
 		 */
 		var initByDevice = function()
 		{
-			console.log('initByDevice')
 			visibility.init();
 
 			if (browser.isStandaloneApp()) {
@@ -82,7 +82,6 @@ var trfk = (function(window, $)
 		 */
 		var initializeApp = function()
 		{
-			console.log('initializeApp')
 			$('#install').remove();
 			$('#map-canvas, #destination, body > .page').show();
 
@@ -125,7 +124,6 @@ var trfk = (function(window, $)
 		 */
 		var initializeMap = function()
 		{
-			console.log('initializeMap')
 			var container = document.getElementById("map-canvas");
 			var styleParams = [
 				{
@@ -153,7 +151,6 @@ var trfk = (function(window, $)
 		 */
 		var initializeStreetView = function(map)
 		{
-			console.log('initializeStreetView')
 			var panorama = map.getStreetView();
 			panorama.setPov({
 				heading: 265,
@@ -167,7 +164,6 @@ var trfk = (function(window, $)
 		 */
 		var initAndroid = function()
 		{
-			console.log('initAndroid')
 			window.scrollTo(0,1);
 			//$('body').addClass('device-android');
 		};
@@ -177,7 +173,6 @@ var trfk = (function(window, $)
 		 */
 		var preInitIOS = function()
 		{
-			console.log('preInitIOS')
 			var container = $("#install");
 			container.on("touchmove", false);
 			if (browser.isMobileSafari()) {
@@ -295,7 +290,6 @@ var trfk = (function(window, $)
 		 */
 		visibility.init = function()
 		{
-			console.log('visibility.init')
 			var d = window.document;
 			if (typeof d.mozHidden !== "undefined") {
 				visibility.browserHiddenParam = "mozHidden";
@@ -396,7 +390,6 @@ var trfk = (function(window, $)
 		 */
 		user.getLocation = function()
 		{
-			console.log('user.getLocation')
 			var def = Q.defer();
 			var params = {
 				// see more details at http://diveintohtml5.info/geolocation.html
@@ -433,7 +426,6 @@ var trfk = (function(window, $)
 		 */
 		user.saveLocation = function(pos, expire)
 		{
-			console.log('user.saveLocation')
 			if (!expire) {
 				var expire = 60000; // 1 minute
 			}
@@ -447,7 +439,6 @@ var trfk = (function(window, $)
 		 */
 		user.loadLastLocation = function()
 		{
-			console.log('user.loadLastLocation')
 			if (!window.localStorage.hasOwnProperty('user-last-location-expire')) {
 				return false;
 			}
@@ -466,7 +457,6 @@ var trfk = (function(window, $)
 
 		user.clearSavedLocation = function()
 		{
-			console.log('user.clearSavedLocation')
 			storage.delete('user-last-location-expire');
 			storage.delete('user-last-location-lat');
 			storage.delete('user-last-location-lng');
@@ -477,7 +467,6 @@ var trfk = (function(window, $)
 		 */
 		user.showLocation = function()
 		{
-			console.log('user.showLocation')
 			Q.fcall(user.getLocation)
 				.then(function(pos)
 				{
@@ -504,7 +493,6 @@ var trfk = (function(window, $)
 		 */
 		var navigateFromAToB = function(userPos, destinationPos)
 		{
-			console.log('navigateFromAToB')
 			var def = Q.defer();
 			var request = {
 				origin:      userPos,
@@ -569,7 +557,6 @@ var trfk = (function(window, $)
 		 */
 		marker.selfNavigationClick = function(markerItem)
 		{
-			console.log('selfNavigationClick')
 			Q.all([
 					user.getLocation(),
 					markerItem.getPosition()
@@ -590,7 +577,6 @@ var trfk = (function(window, $)
 		 */
 		locationData.get = function()
 		{
-			console.log('locationData.get')
 			var def = Q.defer();
 			var data = false;
 			var cacheExpired = locationData.isCacheExpired();
@@ -628,7 +614,6 @@ var trfk = (function(window, $)
 		 */
 		locationData.save = function(data)
 		{
-			console.log('locationData.save')
 			var expire = 3600000; // 1 hour
 			storage.set('location-data', JSON.stringify(data));
 			storage.set('location-data-expire', getTime() + expire);
@@ -649,7 +634,6 @@ var trfk = (function(window, $)
 		 */
 		locationData.getFromCache = function()
 		{
-			console.log('locationData.getFromCache')
 			var data = storage.get('location-data');
 			return JSON.parse(data);
 		};
@@ -659,7 +643,6 @@ var trfk = (function(window, $)
 		 */
 		locationData.load = function()
 		{
-			console.log('locationData.load')
 			var def = Q.defer();
 			var params = {
 				method:   'post',
@@ -687,7 +670,6 @@ var trfk = (function(window, $)
 		 */
 		var getLocationMarkers = function(locationList, onClickCallback)
 		{
-			console.log('getLocationMarkers')
 			var markers = [];
 			var icon    = marker.appIcon();
 			var shadow  = marker.shadow();
@@ -709,7 +691,6 @@ var trfk = (function(window, $)
 		 */
 		var getLocationInfo = function(pos)
 		{
-			console.log('getLocationInfo')
 			var def = Q.defer();
 			geocoder.geocode({'latLng': pos}, function(results, status){
 				if (status == google.maps.GeocoderStatus.OK) {
@@ -723,7 +704,6 @@ var trfk = (function(window, $)
 
 		var transformNavigationResponse = function(navigationResponse)
 		{
-			console.log('transformNavigationResponse')
 			var def = Q.defer();
 			var destinationPos = new google.maps.LatLng(
 				navigationResponse.request.destination.lat(),
@@ -779,7 +759,6 @@ var trfk = (function(window, $)
 		 */
 		var populateDestionationView = function(data)
 		{
-			console.log('populateDestionationView')
 			var des  = $('#destination');
 			var divs = des.find('.bottom-line > *');
 			var src  = getStreetViewImageUrl(data.destination, 100, 100);
@@ -887,7 +866,6 @@ var trfk = (function(window, $)
 		 */
 		var defaultErrorHandler = function(error, callback)
 		{
-			console.log('defaultErrorHandler')
 			$('body > .page').hide();
 			var errorWidget = $('#error');
 			errorWidget.find('h2').text('Hiba történt');
@@ -910,7 +888,6 @@ var trfk = (function(window, $)
 		 */
 		var activateUI = function()
 		{
-			console.log('activateUI')
 			if (activatedUI) {
 				return false;
 			}
@@ -970,7 +947,6 @@ var trfk = (function(window, $)
 		 */
 		var navigateUserToNearestPoint =  function()
 		{
-			console.log('navigateUserToNearestPoint')
 			Q.fcall(user.getLocation)
 				.then(function(pos) {
 					var marker = getNearestPoint(pos, markers);
@@ -991,7 +967,6 @@ var trfk = (function(window, $)
 		 */
 		var getNearestPoint = function(pos, markers)
 		{
-			console.log('getNearestPoint')
 			if (markers.length < 1) {
 				return null;
 			}
@@ -1028,7 +1003,6 @@ var trfk = (function(window, $)
 
 		var checkSoftwareUpdate = function()
 		{
-			console.log('checkSoftwareUpdate')
 			var def = Q.defer();
 			window.applicationCache.addEventListener('updateready', function(e)
 			{
@@ -1082,15 +1056,9 @@ var trfk = (function(window, $)
  * - Mark!
  */
 $(function() {
-	console.log(1)
 	var app = trfk.getInstance();
-	console.log(2)
 	if (app.browser.isIOS()) {
-		console.log(3)
 		app.preInitIOS();
-		console.log(4)
 	}
-	console.log(5)
 	app.init();
-	console.log(6)
 });
