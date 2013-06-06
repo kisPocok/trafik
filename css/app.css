@@ -320,6 +320,10 @@ Term of use layout
 #legal .btn {
 	margin-top: 23px;
 }
+#legal .fineprint {
+	font-size: 80%;
+	font-style: italic;
+}
 /*
 --------------------------------------
 Error page
@@ -485,6 +489,9 @@ and (max-device-width: 480px)
 and (orientation: landscape) {
 	.page {
 		max-width: 100%;
+	}
+	#legal .fineprint {
+		display: none;
 	}
 }
 
