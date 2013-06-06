@@ -49,12 +49,15 @@ var trfk = (function(window, $)
 				// telepített alkalmazás, indítás
 				initializeApp();
 			} else {
+				var imgSrc = browser.isMobileSafari()
+					? '/images/welcome-550x440-compressed.png'
+					: '/images/welcome-1100x990-compressed.png';
+				var install = $('#install');
+				var style = {
+					backgroundImage: 'url(' + imgSrc + ')'
+				};
 				var afterImageLoading = function()
 				{
-					var install = $('#install');
-					var style = {
-						backgroundImage: 'url(../images/welcome-550x440-compressed.png)'
-					};
 					install.find('.phone').css(style)
 					install.show();
 					if (browser.isMobileSafari() && !browser.isMobileChrome()) {
@@ -66,10 +69,10 @@ var trfk = (function(window, $)
 						$('#run').click(initializeApp);
 					}
 				};
-				var welcomeImg = new Image();
+				var welcomeImg     = new Image();
 				welcomeImg.onload  = afterImageLoading;
 				welcomeImg.onerror = afterImageLoading;
-				welcomeImg.src = '/images/welcome-1100x990-compressed.png';
+				welcomeImg.src     = imgSrc;
 			}
 		};
 

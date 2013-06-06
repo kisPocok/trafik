@@ -26,7 +26,7 @@ $autoRun     = isset($_GET['autorun']) && intval($_GET['autorun']) === 1;
 	<meta property="og:url" content="<?=$url; ?>" />
 	<meta property="og:locale" content="hu_HU" />
 	<meta property="og:site_name" content="<?=$appTitle; ?>" />
-	<meta property="og:image" content="<?=$url; ?>/images/welcome-1100x990.png" />
+	<meta property="og:image" content="<?=$url; ?>/images/welcome-1100x990-compressed.png" />
 
 	<link rel="shortcut icon" href="images/favicon.png" />
 	<link rel="apple-touch-icon" href="apple-touch-icon-57x57-precomposed.png" />
