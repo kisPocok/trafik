@@ -54,7 +54,8 @@ var trfk = (function(window, $)
 					: '/images/welcome-1100x990-compressed.png';
 				var install = $('#install');
 				var style = {
-					backgroundImage: 'url(' + imgSrc + ')'
+					backgroundImage: 'url(' + imgSrc + ')',
+					marginTop: browser.isMobileSafari() ? 150 : 0
 				};
 				var afterImageLoading = function()
 				{
@@ -182,7 +183,7 @@ var trfk = (function(window, $)
 			if (browser.isMobileSafari()) {
 				setTimeout(function() {
 					container.find('h2').remove();
-					container.find('h1').after($('<h2>Add a kezdőlapodhoz!</h2>'));
+					container.find('h1').after($('<h2>Add a főképernyődhöz!</h2>'));
 				}, 8000);
 			}
 		};

@@ -341,7 +341,7 @@ Welcome layout
 #install h2 {
 	position: relative;
 	z-index: 12;
-	width: 325px;
+	max-width: 325px;
 	margin-left: 20px;
 
 	color: rgba(255, 255, 255, 0.8);
