@@ -1061,7 +1061,6 @@ var trfk = (function(window, $)
  * - [..]
  * - Mark!
  */
-/*
 $(function() {
 	console.log(1)
 	var app = trfk.getInstance();
@@ -1075,4 +1074,3 @@ $(function() {
 	app.init();
 	console.log(6)
 });
-*/
