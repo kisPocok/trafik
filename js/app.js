@@ -869,12 +869,14 @@ var trfk = (function(window, $)
 		{
 			$(document).bind('touchmove', false); // disable scrolling
 
-			$('.settings').click(function(event)
+			var settingsClick = function(event)
 			{
 				event.stopPropagation();
 				$('#destination, #settings').toggleClass('hidden');
 				return false;
-			});
+			}
+
+			$('.settings').click(settingsClick).touchstart(settingsClick);
 
 			$('.legal a').click(function(event)
 			{
