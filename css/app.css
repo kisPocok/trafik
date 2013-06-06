@@ -481,6 +481,9 @@ and (orientation: portrait) {
 	.page {
 		max-width: 100%;
 	}
+    #legal.page {
+	    margin-top: -628px;
+    }
 }
 @media only screen
 and (-webkit-min-device-pixel-ratio: 2)
