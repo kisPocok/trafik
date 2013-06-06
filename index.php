@@ -113,9 +113,9 @@ $autoRun     = isset($_GET['autorun']) && intval($_GET['autorun']) === 1;
 <script src="js/q.min.js"></script>
 <script src="js/flat-ui.inputs.js"></script>
 <script src="js/app.js"></script>
-<!--
 <script>var addToHomeConfig = { autostart:false, message:'<?=$add2home; ?>'};</script>
 <script src="js/add2home.js"></script>
+<!--
 <?php if($autoRun): ?>
 <script>/*AutoRun:ON*/$(function(){
 		console.log('autostart1')
@@ -123,6 +123,7 @@ $autoRun     = isset($_GET['autorun']) && intval($_GET['autorun']) === 1;
 		console.log('autostart2')
 	});</script>
 <?php endif; ?>
+-->
 <script>
 (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
 	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -131,6 +132,5 @@ $autoRun     = isset($_GET['autorun']) && intval($_GET['autorun']) === 1;
 ga('create', 'UA-41202408-1', 'herokuapp.com');
 ga('send', 'pageview');
 </script>
--->
 </body>
 </html>
