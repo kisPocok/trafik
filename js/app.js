@@ -1,6 +1,6 @@
 /**
  * Console for all browser
- */
+ *
 var method;
 var noop = function () {};
 var methods = [
@@ -20,7 +20,6 @@ while (length--) {
 		console[method] = noop;
 	}
 }
-
 /**
  * Application
  */
@@ -1077,13 +1076,3 @@ $(function() {
 	console.log(6)
 });
 */
-
-/**
- * Config for add2home.js
- * @type {{message: string}}
- */
-var addToHomeConfig = {
-	message: 'Add a kezdőlapodhoz! Trafik kereső alkalmazást a(z) `%icon` ikon megnyomásával telepítheted <strong>%device</strong> készülékedre.',
-	lifespan: 200000,
-	expire:   0
-};
