@@ -53,7 +53,7 @@ var trfk = (function(window, $)
 				{
 					var install = $('#install');
 					var style = {
-						backgroundImage: 'url(../images/welcome-1100x990-compressed.png)'
+						backgroundImage: 'url(../images/welcome-550x440-compressed.png)'
 					};
 					install.find('.phone').css(style)
 					install.show();
